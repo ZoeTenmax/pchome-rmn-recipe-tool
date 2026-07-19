@@ -679,11 +679,11 @@
         attempts+=1;
         try {
           popup.postMessage({type:'pchome-rmn-calculator-prefill',token,payload},'https://ads.pchome.tw');
-          if(!calculatorFrameRedirected && popup.frames.length===1) {
+          if(!calculatorFrameRedirected && popup.frames.length>=1) {
             popup.frames[0].location.href=calculatorUrl;
             calculatorFrameRedirected=true;
           }
-          if(calculatorFrameRedirected && popup.frames.length===1) {
+          if(calculatorFrameRedirected && popup.frames.length>=1) {
             popup.frames[0].postMessage({type:'pchome-rmn-calculator-prefill',token,payload},budgetCalculatorOrigin);
           }
         } catch {}
