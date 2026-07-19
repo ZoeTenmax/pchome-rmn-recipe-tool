@@ -87,29 +87,38 @@
     .btn { border:0; border-radius:10px; padding:10px 16px; font-weight:800; transition:.15s; }
     .btn:hover { transform:translateY(-1px); } .btn:focus-visible { outline:3px solid rgba(7,143,212,.24); outline-offset:2px; }
     .btn.primary { color:#fff; background:var(--blue-deep); } .btn.secondary { background:#edf3f7; color:var(--navy); } .btn.lime { background:var(--teal); color:#fff; }
-    .result { padding:14px 20px; background:#fff; }
-    .result-top { display:grid; flex:0 0 auto; grid-template-columns:1.25fr .75fr; gap:10px; margin-bottom:7px; }
-    .recipe-summary { padding:12px 17px; border-radius:13px; color:#fff; background:linear-gradient(120deg,#078fd4,#0879bb); }
-    .recipe-summary .tag { display:inline-block; border-radius:999px; background:#fff; color:var(--blue-deep); padding:5px 10px; font-weight:900; font-size:.78rem; }
-    .recipe-summary h2 { margin:5px 0 2px; font-size:1.28rem; } .recipe-summary p { margin:0; color:#e1f6ff; font-size:.78rem; }
-    .money { padding:11px 15px; border:1px solid var(--line); border-radius:13px; } .money small { color:var(--muted); font-weight:700; } .money b { display:block; color:var(--blue-deep); font-size:1.52rem; margin:1px 0; letter-spacing:-.05em; } .money span { color:var(--muted); font-size:.75rem; }
+    .result { padding:12px 20px; background:#fff; }
+    .result-top { display:grid; flex:0 0 auto; grid-template-columns:1.25fr .75fr; gap:9px; margin-bottom:4px; }
+    .recipe-summary { display:flex; flex-direction:column; justify-content:center; padding:9px 15px; border-radius:12px; color:#fff; background:linear-gradient(120deg,#078fd4,#0879bb); }
+    .recipe-summary .tag { display:inline-block; align-self:flex-start; border-radius:999px; background:rgba(255,255,255,.94); color:var(--blue-deep); padding:3px 8px; font-weight:900; font-size:.68rem; }
+    .recipe-summary h2 { margin:3px 0 0; font-size:1.14rem; } .recipe-summary p { display:none; }
+    .money { display:grid; align-content:center; padding:8px 14px; border:1px solid var(--line); border-radius:12px; } .money small { color:var(--muted); font-weight:700; font-size:.7rem; } .money b { display:block; color:var(--blue-deep); font-size:1.32rem; line-height:1.15; margin:0; letter-spacing:-.05em; } .money span { color:var(--muted); font-size:.7rem; }
     .result-tables { display:grid; flex:0 0 auto; grid-template-columns:minmax(300px,.85fr) minmax(0,1.45fr); gap:10px; align-items:start; }
-    .result-section { min-width:0; margin-top:6px; } .result-section h3 { margin:0 0 4px; font-size:.9rem; }
-    .recipe-table-wrap { border:1px solid var(--line); border-radius:13px; overflow:hidden; }
+    .result-section { min-width:0; margin-top:5px; } .result-section h3 { display:flex; align-items:center; gap:6px; margin:0 0 4px; font-size:.86rem; }
+    .section-number { display:inline-grid; place-items:center; width:20px; height:20px; flex:0 0 20px; border-radius:50%; background:var(--blue-deep); color:#fff; font-size:.66rem; }
+    .recipe-table-wrap { border:1px solid var(--line); border-radius:11px; overflow:hidden; }
     .recipe-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:.76rem; }
-    .recipe-table th { padding:6px 9px; text-align:left; background:#edf7fb; color:#284b60; font-size:.7rem; }
-    .recipe-table td { padding:6px 9px; vertical-align:top; border-top:1px solid var(--line); color:#405965; }
+    .recipe-table th { padding:5px 8px; text-align:left; background:#edf7fb; color:#284b60; font-size:.68rem; }
+    .recipe-table td { padding:5px 8px; vertical-align:middle; border-top:1px solid var(--line); color:#405965; }
     .placement-table th:nth-child(1) { width:62%; } .placement-table th:nth-child(2) { width:38%; }
     .task-table { table-layout:auto; font-size:.69rem; } .task-table th,.task-table td { white-space:nowrap; text-align:right; }
     .task-table th:first-child,.task-table td:first-child { min-width:112px; text-align:left; white-space:normal; }
     .task-total { color:var(--navy); font-weight:900; } .task-money { color:var(--blue); font-weight:800; } .task-empty { color:#9aa8b0; }
-    .placement-name { display:block; color:var(--navy); font-weight:900; } .placement-role { display:block; margin-top:1px; color:var(--muted); font-size:.68rem; line-height:1.25; }
+    .placement-name { display:block; color:var(--navy); font-weight:900; } .placement-role { display:none; }
     .placement-money { color:var(--blue); font-size:.9rem; font-weight:900; white-space:nowrap; }
     .goal-list { display:flex; flex-wrap:wrap; gap:5px; } .goal-chip { padding:5px 7px; border-radius:9px; background:#edf6f9; color:#205a76; font-weight:750; font-size:.74rem; }
     .pill { display:inline-block; margin:4px 4px 0 0; padding:5px 8px; border-radius:99px; background:#eaf4f8; color:#186188; font-size:.77rem; font-weight:800; }
-    .advisor { padding:8px 11px; border:1px solid #b9dce9; border-radius:12px; background:linear-gradient(135deg,#eefaff,#fff); }
+    .advisor-details { margin-top:6px; border:1px solid #b9dce9; border-radius:11px; background:linear-gradient(135deg,#eefaff,#fff); overflow:hidden; }
+    .advisor-details summary { display:flex; align-items:center; gap:8px; padding:7px 11px; color:var(--navy); font-size:.78rem; font-weight:900; cursor:pointer; list-style:none; }
+    .advisor-details summary::-webkit-details-marker { display:none; }
+    .advisor-details summary:after { content:"＋"; margin-left:auto; color:var(--blue-deep); font-size:1rem; }
+    .advisor-details[open] summary:after { content:"－"; }
+    .advisor-details summary small { color:var(--muted); font-size:.68rem; font-weight:500; }
+    .advisor { max-height:145px; overflow:auto; padding:0 11px 8px; }
     .advisor ul { margin:0; padding-left:17px; color:#405965; font-size:.7rem; line-height:1.35; columns:2; column-gap:24px; } .advisor li { break-inside:avoid; } .advisor li+li { margin-top:2px; }
-    .result .actions { margin-top:auto; padding-top:3px; }
+    .result .actions { margin-top:auto; padding-top:5px; }
+    .action-cluster { display:flex; gap:7px; flex-wrap:wrap; justify-content:flex-end; }
+    .result .actions .btn { padding:8px 12px; font-size:.78rem; }
     .footnote { margin-top:12px; padding:10px 13px; border-left:4px solid var(--orange); background:#fff8ed; color:#745231; font-size:.77rem; }
     .hide { display:none!important; }
     @media (max-width:940px) and (min-width:641px) {
@@ -137,13 +146,12 @@
       input,select,textarea { padding:9px 11px; }
       .actions { padding-top:7px; }
       .result { padding-block:10px; }
-      .result .recipe-summary p,
-      .result .placement-role { display:none; }
+      .result .recipe-summary p { display:none; }
       .result .recipe-table th,
       .result .recipe-table td { padding:5px 6px; }
       .result .task-table th:first-child,
       .result .task-table td:first-child { min-width:96px; }
-      .result .advisor { padding-block:6px; }
+      .result .advisor { max-height:112px; padding-bottom:6px; }
       .result .advisor ul { font-size:.66rem; line-height:1.28; }
       .result .actions .btn { padding:8px 12px; font-size:.82rem; }
     }
@@ -151,7 +159,7 @@
       html,body { overflow:auto; } .shell { height:auto; min-height:100%; padding:16px 12px 46px; display:block; } .hero { padding:30px 24px; border-radius:20px; } .stepper { margin:14px 0; } .panel { height:auto; overflow:visible; padding:22px 17px; border-radius:20px; }
       .stepper { grid-template-columns:1fr; } .grid-2,.grid-3,.cards,.planning-layout,.result-top,.result-tables,.toggle-grid { grid-template-columns:1fr; }
       .task { grid-template-columns:1fr; gap:9px; } .recipe-table { table-layout:auto; } .recipe-table-wrap { overflow:auto; } .panel-head { align-items:start; flex-direction:column; }
-      .actions { flex-wrap:wrap; } .actions .btn { flex:1; } .summary-bar { align-items:start; flex-direction:column; } .advisor ul { columns:1; }
+      .actions { flex-wrap:wrap; } .actions .btn { flex:1; } .action-cluster { width:100%; } .summary-bar { align-items:start; flex-direction:column; } .advisor ul { columns:1; }
     }
   </style>
 </head>
@@ -205,15 +213,15 @@
 
     <section class="panel result" data-panel="3">
       <div class="result-top">
-        <div class="recipe-summary"><span class="tag">PChome RMN 投放規劃</span><h2>你的版位與預算建議</h2><p>先看本期版位配置，再確認各項投放目標如何拆分。</p></div>
+        <div class="recipe-summary"><span class="tag">成果預覽</span><h2>版位與預算建議</h2><p>先看本期版位配置，再確認各項投放目標如何拆分。</p></div>
         <div class="money"><small>本期總預算</small><b id="resultBudget">$0</b><span id="resultFlight">尚未設定投放期間</span></div>
       </div>
       <div class="result-tables">
-        <section class="result-section"><h3>版位與預算</h3><div class="recipe-table-wrap"><table class="recipe-table placement-table"><thead><tr><th>採用版位</th><th>版位預算</th></tr></thead><tbody id="recipeTable"></tbody></table></div></section>
-        <section class="result-section"><h3>各任務配置</h3><div class="recipe-table-wrap"><table class="recipe-table task-table" id="taskTable"></table></div></section>
+        <section class="result-section"><h3><span class="section-number">1</span>版位與預算</h3><div class="recipe-table-wrap"><table class="recipe-table placement-table"><thead><tr><th>採用版位</th><th>版位預算</th></tr></thead><tbody id="recipeTable"></tbody></table></div></section>
+        <section class="result-section"><h3><span class="section-number">2</span>各任務配置</h3><div class="recipe-table-wrap"><table class="recipe-table task-table" id="taskTable"></table></div></section>
       </div>
-      <section class="result-section"><h3>投放建議</h3><div class="advisor" id="advisorSummary"></div></section>
-      <div class="actions"><button class="btn secondary" data-back="2">← 返回調整條件</button><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="copyPlan">複製規劃摘要</button><button class="btn primary" id="downloadPlan">下載規劃摘要</button><a class="btn lime" id="budgetTool" target="pchome-rmn-budget-calculator" rel="noopener" href="https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/" style="text-decoration:none">前往預算計算機 →</a></div></div>
+      <details class="advisor-details"><summary><span class="section-number">3</span>查看投放建議 <small>需要時再展開完整說明</small></summary><div class="advisor" id="advisorSummary"></div></details>
+      <div class="actions"><button class="btn secondary" data-back="2">← 返回調整條件</button><div class="action-cluster"><button class="btn secondary" id="copyPlan">複製規劃摘要</button><button class="btn primary" id="downloadPlan">下載規劃摘要</button><a class="btn lime" id="budgetTool" target="_blank" rel="noopener" href="https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/" style="text-decoration:none">前往預算計算機 →</a></div></div>
     </section>
   </main>
 
@@ -226,9 +234,6 @@
     };
     const state = { tasks:{always:true,launch:false,promo:false,brand:false}, importance:{always:'必要預算',launch:'加強預算',promo:'加強預算',brand:'可選預算'} };
     const $ = (s) => document.querySelector(s);
-    const budgetCalculatorArticleUrl='https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/';
-    const budgetCalculatorEmbedUrl='https://zoetenmax.github.io/pchome-rmn-recipe-tool/calculator.html';
-    const budgetCalculatorOrigin='https://zoetenmax.github.io';
     const allocationRoundingUnit=100;
     const formatMoney = (n) => '$' + Math.round(n || 0).toLocaleString('zh-TW');
     const roundAllocation = n => Math.round((n || 0) / allocationRoundingUnit) * allocationRoundingUnit;
@@ -614,93 +619,7 @@
         return `<tr><td><span class="placement-name">${TASKS[plan.key].name}</span></td><td class="task-total">${formatMoney(plan.amount)}</td>${cells}</tr>`;
       }).join('')}</tbody>`;
       state.last={total,posture,aggregate,floorResult,taskPlans,executionPlans,keywordTiers};
-      $('#budgetTool').href=buildBudgetCalculatorArticleUrl();
       showStep(3);
-    }
-    function budgetCalculatorPayload() {
-      const aggregate=state.last?.aggregate;
-      if(!aggregate) return null;
-      return {
-        source:'recipe',
-        version:1,
-        start:$('#flightStart').value,
-        end:$('#flightEnd').value,
-        keyword:roundAllocation(aggregate.keyword||0),
-        banner:roundAllocation((aggregate.appBanner||0)+(aggregate.webBanner||0)),
-        recommend:roundAllocation(aggregate.recommend||0),
-        brand:roundAllocation(aggregate.brand||0)
-      };
-    }
-    function buildBudgetCalculatorArticleUrl() {
-      const payload=budgetCalculatorPayload();
-      if(!payload) return budgetCalculatorArticleUrl;
-      const url=new URL(budgetCalculatorArticleUrl);
-      const params={
-        rmn_source:payload.source,
-        rmn_v:payload.version,
-        rmn_start:payload.start,
-        rmn_end:payload.end,
-        rmn_keyword:payload.keyword,
-        rmn_banner:payload.banner,
-        rmn_recommend:payload.recommend,
-        rmn_brand:payload.brand
-      };
-      Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));
-      return url.toString();
-    }
-    function buildBudgetCalculatorEmbedUrl(payload) {
-      const url=new URL(budgetCalculatorEmbedUrl);
-      const params={
-        rmn_source:payload.source,
-        rmn_v:payload.version,
-        rmn_start:payload.start,
-        rmn_end:payload.end,
-        rmn_keyword:payload.keyword,
-        rmn_banner:payload.banner,
-        rmn_recommend:payload.recommend,
-        rmn_brand:payload.brand
-      };
-      Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));
-      return url.toString();
-    }
-    function openBudgetCalculatorArticle(event) {
-      const payload=budgetCalculatorPayload();
-      if(!payload) return;
-      const targetUrl=buildBudgetCalculatorArticleUrl();
-      const popup=window.open('', 'pchome-rmn-budget-calculator');
-      if(!popup) return;
-      event.preventDefault();
-      popup.location.href=targetUrl;
-      const token=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const calculatorUrl=buildBudgetCalculatorEmbedUrl(payload);
-      let calculatorFrameRedirected=false;
-      let attempts=0;
-      const sendPayload=()=>{
-        attempts+=1;
-        try {
-          popup.postMessage({type:'pchome-rmn-calculator-prefill',token,payload},'https://ads.pchome.tw');
-          if(!calculatorFrameRedirected && popup.frames.length>=1) {
-            popup.frames[0].location.href=calculatorUrl;
-            calculatorFrameRedirected=true;
-          }
-          if(calculatorFrameRedirected && popup.frames.length>=1) {
-            popup.frames[0].postMessage({type:'pchome-rmn-calculator-prefill',token,payload},budgetCalculatorOrigin);
-          }
-        } catch {}
-        if(attempts>=30) clearInterval(timer);
-      };
-      const receiveAck=message=>{
-        if(message.origin!==budgetCalculatorOrigin || message.data?.type!=='pchome-rmn-calculator-prefill-applied' || message.data?.token!==token) return;
-        clearInterval(timer);
-        window.removeEventListener('message',receiveAck);
-      };
-      window.addEventListener('message',receiveAck);
-      const timer=setInterval(sendPayload,400);
-      sendPayload();
-      setTimeout(()=>{
-        clearInterval(timer);
-        window.removeEventListener('message',receiveAck);
-      },12500);
     }
     function textPlan() {
       const total=Number($('#totalBudget').value)||0;
@@ -731,7 +650,6 @@
     $('#buildRecipe').addEventListener('click',buildRecipe);
     $('#copyPlan').addEventListener('click',async()=>{ try { await navigator.clipboard.writeText(textPlan()); $('#copyPlan').textContent='已複製 ✓'; setTimeout(()=>$('#copyPlan').textContent='複製規劃摘要',1600); } catch { alert('目前瀏覽器無法存取剪貼簿，請改用下載規劃摘要。'); } });
     $('#downloadPlan').addEventListener('click',()=>{ const blob=new Blob([textPlan()],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='rmn-recipe-plan.txt'; a.click(); URL.revokeObjectURL(url); });
-    $('#budgetTool').addEventListener('click',openBudgetCalculatorArticle);
   </script>
 </body>
 </html>
