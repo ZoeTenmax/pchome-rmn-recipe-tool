@@ -8,10 +8,12 @@
   <title>PChome RMN 投廣配方師｜廣告版位與預算規劃工具</title>
   <style>
     :root {
-      --ink:#263b4b; --muted:#627889; --paper:#f4f8fb; --line:#dbe7ef;
+      --ink:#263b4b; --muted:#627889; --paper:#f4f8fb; --line:#d9e7ee; --control-line:#b9dce9;
       --navy:#0b2944; --blue:#078fd4; --blue-deep:#0879bb; --teal:#14a6ad;
-      --sky:#eaf7fd; --lime:#cde977; --orange:#f4a340; --white:#fff;
+      --sky:#eaf7fd; --surface-soft:#f8fbfd; --surface-head:#edf7fb; --surface-summary:#f3f8fa; --lime:#cde977; --orange:#f4a340; --white:#fff;
       --shadow:0 12px 32px rgba(18,52,77,.10);
+      --font-title:1.42rem; --font-section:1.3rem; --font-label:.9rem; --font-body:.82rem;
+      --weight-title:900; --weight-label:800; --radius-card:14px; --radius-control:12px;
     }
     * { box-sizing:border-box; }
     html,body { height:100%; overflow:hidden; }
@@ -32,33 +34,36 @@
     .panel.active { display:flex; flex-direction:column; animation:fade .22s ease; } @keyframes fade { from{opacity:.3; transform:translateY(8px)} to{opacity:1;transform:none} }
     .panel-head { display:flex; flex:0 0 auto; gap:18px; justify-content:space-between; align-items:flex-end; margin-bottom:11px; }
     .panel-title-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .panel h2 { margin:0; font-size:1.42rem; letter-spacing:-.03em; } .panel-head p { margin:3px 0 0; color:var(--muted); font-size:.88rem; }
+    .panel h2 { margin:0; color:var(--navy); font-size:var(--font-title); font-weight:var(--weight-title); letter-spacing:-.03em; } .panel-head p { margin:3px 0 0; color:var(--muted); font-size:.88rem; font-weight:500; }
     .grid-2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
     .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
-    .condition-section { flex:0 0 auto; padding:13px 15px 12px; border:1px solid #d9e7ee; border-radius:14px; background:#f8fbfd; }
+    .condition-section { flex:0 0 auto; padding:13px 15px 12px; border:1px solid var(--line); border-radius:var(--radius-card); background:var(--surface-soft); }
     .condition-section .panel-head { margin-bottom:9px; }
     .condition-grid { gap:12px; }
-    .condition-field { position:relative; gap:6px; padding:10px 11px 9px; border:1px solid #b9dce9; border-radius:12px; background:#fff; box-shadow:0 5px 14px rgba(8,67,99,.06); }
-    .condition-label { display:flex; align-items:center; gap:7px; color:var(--navy); font-weight:900; }
+    .condition-field { position:relative; gap:6px; padding:10px 11px 9px; border:1px solid var(--control-line); border-radius:var(--radius-control); background:var(--white); box-shadow:0 5px 14px rgba(8,67,99,.06); }
+    .condition-label { display:flex; align-items:center; gap:7px; color:var(--navy); font-size:var(--font-label); font-weight:var(--weight-title); }
     .condition-label b { display:inline-grid; place-items:center; width:21px; height:21px; border-radius:50%; background:var(--navy); color:#fff; font-size:.7rem; }
     .condition-field select { border:2px solid #68b7df; padding:9px 11px; font-weight:800; background-color:#fff; }
     .condition-field select:hover { border-color:var(--blue); }
     .condition-field .hint { font-size:.74rem; line-height:1.3; }
-    label.field { display:grid; gap:7px; color:#38505d; font-size:.9rem; font-weight:750; }
-    input,select,textarea { border:1px solid var(--line); border-radius:12px; color:var(--ink); background:#fff; padding:12px 13px; outline:none; }
+    label.field { display:grid; gap:7px; color:#38505d; font-size:var(--font-label); font-weight:var(--weight-label); }
+    input,select,textarea { border:1px solid var(--control-line); border-radius:var(--radius-control); color:var(--ink); background:var(--white); padding:12px 13px; outline:none; }
     input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(7,143,212,.12); }
     textarea { min-height:92px; resize:vertical; font-weight:500; }
-    .hint { color:var(--muted); font-size:.82rem; font-weight:500; }
+    .hint { color:var(--muted); font-size:var(--font-body); font-weight:500; }
     .planning-layout { display:grid; flex:1 1 auto; min-height:0; grid-template-columns:minmax(0,1.7fr) minmax(300px,.9fr); gap:14px; align-items:stretch; }
     .schedule-column { min-width:0; }
     .cards { display:grid; min-height:0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .choice { position:relative; display:block; min-height:0; border:1px solid var(--line); border-radius:13px; padding:10px 14px; background:#fff; transition:.16s; }
+    .choice { position:relative; display:block; min-height:0; border:1px solid var(--line); border-radius:var(--radius-card); padding:10px 14px; background:var(--white); transition:.16s; }
     .choice:hover { border-color:#86c9e9; transform:translateY(-2px); box-shadow:0 8px 18px rgba(7,143,212,.08); }
     .choice input { position:absolute; opacity:0; pointer-events:none; }
     .choice:has(input:checked) { border-color:var(--blue); background:var(--sky); box-shadow:inset 4px 0 0 var(--blue); }
-    .multi-check { position:absolute; right:12px; top:12px; display:grid; place-items:center; width:22px; height:22px; border-radius:50%; border:2px solid #aac1cc; color:transparent; font-weight:900; }
-    .choice:has(input:checked) .multi-check { border-color:var(--blue); background:var(--blue); color:#fff; }
-    .choice .icon { font-size:1.15rem; line-height:1; } .choice strong { display:block; margin-top:4px; } .choice span { display:block; margin-top:2px; color:var(--muted); font-size:.76rem; line-height:1.35; }
+    .multi-check { position:absolute; right:12px; top:12px; display:grid; place-items:center; width:22px; height:22px; border-radius:50%; border:2px solid #aac1cc; }
+    .multi-check svg { display:block; width:13px; height:13px; opacity:0; }
+    .multi-check path { fill:none; stroke:#fff; stroke-width:2.35; stroke-linecap:round; stroke-linejoin:round; }
+    .choice:has(input:checked) .multi-check { border-color:var(--blue); background:var(--blue); }
+    .choice:has(input:checked) .multi-check svg { opacity:1; }
+    .choice .icon { font-size:1.15rem; line-height:1; } .choice strong { display:block; margin-top:4px; color:var(--navy); font-weight:var(--weight-title); } .choice span { display:block; margin-top:2px; color:var(--muted); font-size:.76rem; line-height:1.35; }
     .choice .priority-picker { display:flex; align-items:center; gap:6px; margin-top:5px; color:#38505d; font-size:.72rem; font-weight:800; }
     .choice .priority-picker select { flex:1; min-width:0; padding:6px 7px; font-size:.73rem; }
     .choice:not(:has(input:checked)) .priority-picker { opacity:.48; }
@@ -71,15 +76,15 @@
     .dual-range input::-moz-range-thumb { width:13px; height:13px; border-radius:50%; background:#fff; border:3px solid var(--blue); box-shadow:0 1px 4px rgba(13,50,66,.25); pointer-events:auto; cursor:grab; }
     .option-set { margin-top:10px; } .option-title { display:flex; justify-content:space-between; gap:12px; align-items:baseline; margin-bottom:6px; font-size:.9rem; font-weight:850; }
     .option-title small { color:var(--muted); font-weight:500; }
-    .placement-section.option-set { flex:0 0 auto; margin-top:20px; padding:13px 15px 12px; border:1px solid #d9e7ee; border-radius:14px; background:#fbfdfe; }
+    .placement-section.option-set { flex:0 0 auto; margin-top:20px; padding:13px 15px 12px; border:1px solid var(--line); border-radius:var(--radius-card); background:var(--surface-soft); }
     .placement-section .option-title { align-items:flex-end; margin-bottom:9px; }
-    .placement-section .option-title > span { color:var(--ink); font-size:1.3rem; line-height:1.25; letter-spacing:-.025em; font-weight:900; }
+    .placement-section .option-title > span { color:var(--navy); font-size:var(--font-section); line-height:1.25; letter-spacing:-.025em; font-weight:var(--weight-title); }
     .toggle-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }
     #placementChoices { grid-template-columns:repeat(5,minmax(0,1fr)); }
-    .toggle-card { position:relative; display:block; min-height:68px; padding:9px 10px; border:1px solid var(--line); border-radius:12px; background:#fff; cursor:pointer; }
+    .toggle-card { position:relative; display:block; min-height:68px; padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--white); cursor:pointer; }
     .toggle-card input { position:absolute; opacity:0; pointer-events:none; }
     .toggle-card:has(input:checked) { background:var(--sky); border-color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue); }
-    .toggle-card b { display:block; font-size:.82rem; } .toggle-card span { display:block; margin-top:2px; color:var(--muted); font-size:.69rem; line-height:1.25; }
+    .toggle-card b { display:block; color:var(--navy); font-size:var(--font-body); font-weight:var(--weight-label); } .toggle-card span { display:block; margin-top:2px; color:var(--muted); font-size:.69rem; line-height:1.25; }
     .task-list { display:grid; gap:12px; }
     .task { display:grid; grid-template-columns:minmax(180px,1fr) 150px; align-items:center; gap:15px; border:1px solid var(--line); border-radius:16px; padding:15px 16px; }
     .task.disabled { opacity:.48; background:#fafbfc; }
@@ -90,34 +95,30 @@
     .importance { font-size:.83rem; padding:9px; }
     .summary-bar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:16px; padding:14px 16px; border-radius:14px; background:#f0f5f7; }
     .summary-bar strong { font-size:1.12rem; } .sum-ok { color:#1f702c; } .sum-error { color:#c13b46; }
-    .market-card { height:100%; padding:14px; border-radius:13px; background:#f5fafc; border:1px solid #dfeaf1; }
-    .market-card h3 { margin:0 0 5px; font-size:1rem; } .market-card p { margin:0; color:var(--muted); font-size:.84rem; }
-    .market-impact { margin-top:10px; padding:9px 12px; border-left:4px solid var(--teal); border-radius:8px; background:#f0fafb; color:#47616e; font-size:.76rem; line-height:1.45; }
-    .market-impact b { color:var(--navy); }
-    .condition-section .market-impact { margin-top:9px; padding:7px 10px; border-left:0; background:#eef3f6; color:#6b7d87; font-size:.73rem; line-height:1.35; font-weight:600; }
-    .condition-section .market-impact b { color:#526975; }
+    .market-card { height:100%; padding:14px; border-radius:var(--radius-card); background:var(--surface-soft); border:1px solid var(--line); }
+    .market-card h3 { margin:0 0 5px; color:var(--navy); font-size:1rem; font-weight:var(--weight-title); } .market-card p { margin:0; color:var(--muted); font-size:.84rem; }
     .actions { display:flex; flex:0 0 auto; justify-content:space-between; align-items:center; gap:12px; margin-top:auto; padding-top:11px; }
     .btn { border:0; border-radius:10px; padding:10px 16px; font-weight:800; transition:.15s; }
     .btn:hover { transform:translateY(-1px); } .btn:focus-visible { outline:3px solid rgba(7,143,212,.24); outline-offset:2px; }
     .btn.primary { color:#fff; background:var(--blue-deep); } .btn.secondary { background:#edf3f7; color:var(--navy); } .btn.lime { background:var(--teal); color:#fff; }
     .result { padding:18px 24px; background:#fff; }
     .result-heading { align-items:center; margin-bottom:11px; }
-    .result-meta { display:flex; align-items:center; gap:16px; padding:7px 11px; border-left:3px solid var(--blue); border-radius:8px; background:#f3f8fa; }
+    .result-meta { display:flex; align-items:center; gap:16px; padding:7px 11px; border-left:3px solid var(--blue); border-radius:8px; background:var(--surface-summary); }
     .result-meta-item { display:grid; gap:1px; min-width:120px; }
     .result-meta-item span { color:var(--muted); font-size:.68rem; font-weight:700; }
     .result-meta-item b { color:var(--navy); font-size:.8rem; line-height:1.2; white-space:nowrap; }
     .result-meta-item.budget { min-width:96px; }
     .result-meta-item.budget b { color:var(--blue-deep); font-size:1.08rem; letter-spacing:-.04em; }
-    .result-section { min-width:0; margin-top:2px; } .result-section h3 { display:flex; align-items:center; gap:6px; margin:0 0 6px; font-size:.9rem; }
+    .result-section { min-width:0; margin-top:2px; } .result-section h3 { display:flex; align-items:center; gap:6px; margin:0 0 6px; color:var(--navy); font-size:var(--font-label); font-weight:var(--weight-title); }
     .section-number { display:inline-grid; place-items:center; width:20px; height:20px; flex:0 0 20px; border-radius:50%; background:var(--blue-deep); color:#fff; font-size:.66rem; }
-    .recipe-table-wrap { border:1px solid var(--line); border-radius:11px; overflow:hidden; }
+    .recipe-table-wrap { border:1px solid var(--line); border-radius:var(--radius-control); overflow:hidden; }
     .recipe-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:.76rem; }
-    .recipe-table th { padding:7px 8px; text-align:center; background:#edf7fb; color:#284b60; font-size:.69rem; line-height:1.25; }
+    .recipe-table th { padding:7px 8px; text-align:center; background:var(--surface-head); color:#284b60; font-size:.69rem; line-height:1.25; }
     .recipe-table td { padding:7px 8px; vertical-align:middle; border-top:1px solid var(--line); color:#405965; text-align:center; }
     .combined-table th:first-child,.combined-table td:first-child { width:25%; text-align:left; }
     .combined-table th:nth-child(2),.combined-table td:nth-child(2) { width:16%; background:#f1faff; }
     .combined-table th:nth-child(2) { color:var(--blue-deep); }
-    .combined-table tfoot th,.combined-table tfoot td { border-top:2px solid #9bcfe5; background:#f3f8fa; font-weight:900; }
+    .combined-table tfoot th,.combined-table tfoot td { border-top:2px solid #9bcfe5; background:var(--surface-summary); font-weight:var(--weight-title); }
     .combined-table tfoot th { color:var(--navy); text-align:left; }
     .combined-table tfoot td:nth-child(2) { background:#e8f7fd; }
     .task-total { color:var(--navy); font-weight:900; } .task-money { color:var(--blue); font-weight:800; } .task-empty { color:#9aa8b0; }
@@ -125,7 +126,7 @@
     .placement-money { color:var(--blue); font-size:.92rem; font-weight:900; white-space:nowrap; }
     .goal-list { display:flex; flex-wrap:wrap; gap:5px; } .goal-chip { padding:5px 7px; border-radius:9px; background:#edf6f9; color:#205a76; font-weight:750; font-size:.74rem; }
     .pill { display:inline-block; margin:0; padding:5px 8px; border-radius:99px; background:#eaf4f8; color:#186188; font-size:.77rem; font-weight:800; white-space:nowrap; }
-    .advisor-details { margin-top:6px; border:1px solid #b9dce9; border-radius:11px; background:linear-gradient(135deg,#eefaff,#fff); overflow:hidden; }
+    .advisor-details { margin-top:6px; border:1px solid var(--control-line); border-radius:var(--radius-control); background:var(--surface-soft); overflow:hidden; }
     .advisor-details summary { display:flex; align-items:center; gap:8px; padding:7px 11px; color:var(--navy); font-size:.78rem; font-weight:900; cursor:pointer; list-style:none; }
     .advisor-details summary::-webkit-details-marker { display:none; }
     .advisor-details summary:after { content:"＋"; margin-left:auto; color:var(--blue-deep); font-size:1rem; }
@@ -192,10 +193,10 @@
       <div class="panel-head"><div class="panel-title-row"><h2>想完成哪些投放目標？</h2><span class="pill">可複選</span></div></div>
       <div class="planning-layout">
         <div class="cards" id="missionCards">
-          <label class="choice"><input type="checkbox" value="always" checked><i class="multi-check">✓</i><div class="icon">↗</div><strong>常態導購</strong><span>承接既有搜尋需求，維持主力商品的成交基本盤。</span><div class="priority-picker">本期優先序<select data-priority="always"><option value="必要預算" selected>必要預算｜本期必做</option><option value="加強預算">加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
-          <label class="choice"><input type="checkbox" value="launch"><i class="multi-check">✓</i><div class="icon">✦</div><strong>新品上市</strong><span>讓新品被看見，逐步累積商品認知與搜尋需求。</span><div class="priority-picker">本期優先序<select data-priority="launch"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算" selected>加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
-          <label class="choice"><input type="checkbox" value="promo"><i class="multi-check">✓</i><div class="icon">⚡</div><strong>檔期衝刺</strong><span>在預熱、主檔與返場集中加碼，放大檔期成交機會。</span><div class="priority-picker">本期優先序<select data-priority="promo"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算" selected>加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
-          <label class="choice"><input type="checkbox" value="brand"><i class="multi-check">✓</i><div class="icon">◌</div><strong>品牌經營</strong><span>讓消費者理解品牌主張、商品特色與完整商品線。</span><div class="priority-picker">本期優先序<select data-priority="brand"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算">加強預算｜額外加碼</option><option value="可選預算" selected>可選預算｜有餘裕再做</option></select></div></label>
+          <label class="choice"><input type="checkbox" value="always" checked><i class="multi-check" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5 6.3 11.5 13 4.5"></path></svg></i><div class="icon">↗</div><strong>常態導購</strong><span>承接既有搜尋需求，維持主力商品的成交基本盤。</span><div class="priority-picker">本期優先序<select data-priority="always"><option value="必要預算" selected>必要預算｜本期必做</option><option value="加強預算">加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
+          <label class="choice"><input type="checkbox" value="launch"><i class="multi-check" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5 6.3 11.5 13 4.5"></path></svg></i><div class="icon">✦</div><strong>新品上市</strong><span>讓新品被看見，逐步累積商品認知與搜尋需求。</span><div class="priority-picker">本期優先序<select data-priority="launch"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算" selected>加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
+          <label class="choice"><input type="checkbox" value="promo"><i class="multi-check" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5 6.3 11.5 13 4.5"></path></svg></i><div class="icon">⚡</div><strong>檔期衝刺</strong><span>在預熱、主檔與返場集中加碼，放大檔期成交機會。</span><div class="priority-picker">本期優先序<select data-priority="promo"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算" selected>加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
+          <label class="choice"><input type="checkbox" value="brand"><i class="multi-check" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5 6.3 11.5 13 4.5"></path></svg></i><div class="icon">◌</div><strong>品牌經營</strong><span>讓消費者理解品牌主張、商品特色與完整商品線。</span><div class="priority-picker">本期優先序<select data-priority="brand"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算">加強預算｜額外加碼</option><option value="可選預算" selected>可選預算｜有餘裕再做</option></select></div></label>
         </div>
         <div class="schedule-column">
           <div class="market-card"><h3>設定投放期間與預算</h3><div class="grid-2" style="margin-top:8px"><label class="field">開始日期<input id="flightStart" type="date"></label><label class="field">結束日期<input id="flightEnd" type="date"></label></div><label class="field" style="margin-top:8px">本期總預算（NT$）<input id="totalBudget" type="number" min="0" step="100" value="50000"></label><label class="field" style="margin-top:8px">投放天數：<b id="flightDaysLabel">30 天</b><div class="dual-range"><span class="range-track"></span><span class="range-fill" id="flightRangeFill"></span><input id="flightStartRange" type="range" min="0" max="91" value="0" aria-label="投放開始日"><input id="flightEndRange" type="range" min="0" max="91" value="29" aria-label="投放結束日"></div></label></div>
@@ -206,15 +207,14 @@
 
     <section class="panel" data-panel="2">
       <div class="condition-section">
-        <div class="panel-head"><div><h2>評估這一期的投放條件</h2><p>請依目前實際狀況選擇，系統會調整版位的優先性與預算權重。</p></div></div>
+        <div class="panel-head"><div><h2>評估這一期的投放條件</h2><p>請依目前實際狀況選擇，這些設定會一起調整版位的優先性與預算權重。</p></div></div>
         <div class="grid-3 condition-grid">
           <label class="field condition-field"><span class="condition-label"><b>1</b>品牌認知度</span><select id="brandStrength"><option value="1">1 分｜多數消費者未聽過</option><option value="2">2 分｜僅少數品類消費者認識</option><option value="3" selected>3 分｜部分品類消費者能辨識</option><option value="4">4 分｜多數品類消費者能辨識</option><option value="5">5 分｜消費者會主動搜尋品牌</option></select><span class="hint">請依本期主打品類中的消費者認知自評。</span></label>
           <label class="field condition-field"><span class="condition-label"><b>2</b>關鍵字品類競爭度</span><select id="competition"><option value="1">1 分｜沒有競品投廣</option><option value="2">2 分｜看見 1～3 個競品投廣</option><option value="3" selected>3 分｜看見 4 個以上競品投廣</option></select><span class="hint">請搜尋主力產品字後，再依搜尋結果自評。</span></label>
           <label class="field condition-field"><span class="condition-label"><b>3</b>ROAS 承受度</span><select id="investment"><option value="1">1 分｜ROAS 效率優先</option><option value="2" selected>2 分｜平衡 ROAS 與觸及範圍</option><option value="3">3 分｜擴大觸及範圍優先</option></select><span class="hint">請自評本期 ROAS 與觸及範圍的取捨。</span></label>
         </div>
-        <div class="market-impact" id="marketImpactSummary"></div>
       </div>
-      <section class="option-set placement-section"><div class="option-title"><span>這次有哪些版位可以使用？</span><small>預設全選；若有素材、檔期或執行限制，可取消版位。</small></div><div class="toggle-grid" id="placementChoices">
+      <section class="option-set placement-section"><div class="option-title"><span>這次有哪些版位可以使用？</span><small>系統預設全選；如本期不適用，可取消勾選。</small></div><div class="toggle-grid" id="placementChoices">
         <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b><span>接住已在找商品、比價或比較規格的消費者，作為成交基本盤。</span></label>
         <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b><span>在 APP 首頁放大當期主打商品、檔期或品牌訊息的曝光機會。</span></label>
         <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b><span>在 Web 首頁放大當期主打商品、檔期或品牌訊息的曝光機會。</span></label>
@@ -226,7 +226,7 @@
 
     <section class="panel result" data-panel="3">
       <div class="panel-head result-heading">
-        <div><h2>版位與預算建議</h2><p>查看各版位的建議預算，以及本期投放目標的預算配置。</p></div>
+        <div><h2>版位與預算建議</h2></div>
         <div class="result-meta">
           <div class="result-meta-item budget"><span>本期總預算</span><b id="resultBudget">$0</b></div>
           <div class="result-meta-item"><span>投放期間</span><b id="resultFlight">尚未設定投放期間</b></div>
@@ -289,9 +289,6 @@
         const priority=card.querySelector('[data-priority]');
         if(priority) priority.disabled=!checkbox.checked;
       });
-    }
-    function renderMarketImpacts() {
-      $('#marketImpactSummary').innerHTML='<b>這些設定會一起改變版位的優先性與預算權重。</b>';
     }
     function showStep(step) {
       document.querySelectorAll('[data-panel]').forEach(p => p.classList.toggle('active', p.dataset.panel === String(step)));
@@ -638,12 +635,22 @@
     function textPlan() {
       const total=Number($('#totalBudget').value)||0;
       const last=state.last;
-      const lines=[`PChome RMN 投廣配方師｜版位與預算規劃摘要`,`本期總預算：${formatMoney(total)}`,`投放期間：${flightLabel()}`,``, `版位與預算：`];
       const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告'};
-      Object.entries(last?.aggregate||{}).filter(([,amount])=>amount>0).forEach(([placement,amount])=>lines.push(`- ${labels[placement]}：${formatMoney(amount)}`));
-      lines.push('',`各任務配置：`);
-      (last?.taskPlans||[]).forEach(plan=>lines.push(`- ${TASKS[plan.key].name}｜分配預算 ${formatMoney(plan.amount)}｜其中關鍵字 ${formatMoney(plan.keywordAmount)}`));
-      lines.push('', '提醒：正式投放前請依商品、檔期與廣告規格確認。'); return lines.join('\n');
+      const plans=(last?.executionPlans?.length?last.executionPlans:last?.taskPlans||[]).filter(plan=>plan.amount>0);
+      const placements=Object.entries(last?.aggregate||{}).filter(([,amount])=>amount>0);
+      const lines=[`PChome RMN 廣告版位與預算規劃摘要`,`本期總預算｜${formatMoney(total)}`,`投放期間｜${flightLabel()}`,``,`【版位與預算配置】`];
+      placements.forEach(([placement,amount],index)=>{
+        lines.push(`${index+1}. ${labels[placement]}｜${formatMoney(amount)}`);
+        const breakdown=plans
+          .map(plan=>({name:TASKS[plan.key].name,amount:plan.allocations[placement]||0}))
+          .filter(item=>item.amount>0)
+          .map(item=>`${item.name} ${formatMoney(item.amount)}`);
+        if(breakdown.length) lines.push(`   └ ${breakdown.join('｜')}`);
+      });
+      lines.push(`總計｜${formatMoney(total)}`,``,`【各投放目標總計】`);
+      plans.forEach(plan=>lines.push(`- ${TASKS[plan.key].name}｜${formatMoney(plan.amount)}`));
+      lines.push('', '提醒｜正式投放前請依商品、檔期與廣告規格確認。');
+      return lines.join('\n');
     }
     document.querySelectorAll('[data-next]').forEach(btn=>btn.addEventListener('click',()=>{ if(btn.dataset.next==='2') syncMissions(); showStep(Number(btn.dataset.next)); }));
     document.querySelectorAll('[data-back]').forEach(btn=>btn.addEventListener('click',()=>showStep(Number(btn.dataset.back))));
@@ -656,11 +663,8 @@
     $('#flightEndRange').addEventListener('input',()=>updateDatesFromRange('end'));
     $('#flightStart').addEventListener('change',()=>updateRangeFromDates('start'));
     $('#flightEnd').addEventListener('change',()=>updateRangeFromDates('end'));
-    $('#brandStrength').addEventListener('change',renderMarketImpacts);
-    $('#competition').addEventListener('change',renderMarketImpacts);
-    $('#investment').addEventListener('change',renderMarketImpacts);
     $('#flightStart').min=planningStart; $('#flightStart').max=planningEnd; $('#flightEnd').min=planningStart; $('#flightEnd').max=planningEnd;
-    $('#flightStart').value=planningStart; $('#flightEnd').value=addDays(planningStart,29); renderFlightRange(); updateMissionSelectionCount(); renderMarketImpacts();
+    $('#flightStart').value=planningStart; $('#flightEnd').value=addDays(planningStart,29); renderFlightRange(); updateMissionSelectionCount();
     $('#buildRecipe').addEventListener('click',buildRecipe);
     $('#copyPlan').addEventListener('click',async()=>{ try { await navigator.clipboard.writeText(textPlan()); $('#copyPlan').textContent='已複製 ✓'; setTimeout(()=>$('#copyPlan').textContent='複製規劃摘要',1600); } catch { alert('目前瀏覽器無法存取剪貼簿，請改用下載規劃摘要。'); } });
     $('#downloadPlan').addEventListener('click',()=>{ const blob=new Blob([textPlan()],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='rmn-recipe-plan.txt'; a.click(); URL.revokeObjectURL(url); });
