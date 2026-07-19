@@ -227,7 +227,8 @@
     const state = { tasks:{always:true,launch:false,promo:false,brand:false}, importance:{always:'必要預算',launch:'加強預算',promo:'加強預算',brand:'可選預算'} };
     const $ = (s) => document.querySelector(s);
     const budgetCalculatorArticleUrl='https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/';
-    const budgetCalculatorOrigin='https://amberwu-tmx.github.io';
+    const budgetCalculatorEmbedUrl='https://zoetenmax.github.io/pchome-rmn-recipe-tool/calculator.html';
+    const budgetCalculatorOrigin='https://zoetenmax.github.io';
     const allocationRoundingUnit=100;
     const formatMoney = (n) => '$' + Math.round(n || 0).toLocaleString('zh-TW');
     const roundAllocation = n => Math.round((n || 0) / allocationRoundingUnit) * allocationRoundingUnit;
@@ -647,6 +648,21 @@
       Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));
       return url.toString();
     }
+    function buildBudgetCalculatorEmbedUrl(payload) {
+      const url=new URL(budgetCalculatorEmbedUrl);
+      const params={
+        rmn_source:payload.source,
+        rmn_v:payload.version,
+        rmn_start:payload.start,
+        rmn_end:payload.end,
+        rmn_keyword:payload.keyword,
+        rmn_banner:payload.banner,
+        rmn_recommend:payload.recommend,
+        rmn_brand:payload.brand
+      };
+      Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));
+      return url.toString();
+    }
     function openBudgetCalculatorArticle(event) {
       const payload=budgetCalculatorPayload();
       if(!payload) return;
@@ -658,13 +674,19 @@
         return;
       }
       const token=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const calculatorUrl=buildBudgetCalculatorEmbedUrl(payload);
+      let calculatorFrameRedirected=false;
       let attempts=0;
       const sendPayload=()=>{
         attempts+=1;
         try {
           popup.postMessage({type:'pchome-rmn-calculator-prefill',token,payload},'https://ads.pchome.tw');
-          for(let index=0;index<popup.frames.length;index+=1) {
-            popup.frames[index].postMessage({type:'pchome-rmn-calculator-prefill',token,payload},budgetCalculatorOrigin);
+          if(!calculatorFrameRedirected && popup.frames.length===1) {
+            popup.frames[0].location.href=calculatorUrl;
+            calculatorFrameRedirected=true;
+          }
+          if(calculatorFrameRedirected && popup.frames.length===1) {
+            popup.frames[0].postMessage({type:'pchome-rmn-calculator-prefill',token,payload},budgetCalculatorOrigin);
           }
         } catch {}
         if(attempts>=30) clearInterval(timer);
