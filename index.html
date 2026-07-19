@@ -213,7 +213,7 @@
         <section class="result-section"><h3>各任務配置</h3><div class="recipe-table-wrap"><table class="recipe-table task-table" id="taskTable"></table></div></section>
       </div>
       <section class="result-section"><h3>投放建議</h3><div class="advisor" id="advisorSummary"></div></section>
-      <div class="actions"><button class="btn secondary" data-back="2">← 返回調整條件</button><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="copyPlan">複製規劃摘要</button><button class="btn primary" id="downloadPlan">下載規劃摘要</button><a class="btn lime" id="budgetTool" target="_blank" rel="noopener" href="https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/" style="text-decoration:none">前往預算計算機文章 →</a></div></div>
+      <div class="actions"><button class="btn secondary" data-back="2">← 返回調整條件</button><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="copyPlan">複製規劃摘要</button><button class="btn primary" id="downloadPlan">下載規劃摘要</button><a class="btn lime" id="budgetTool" target="pchome-rmn-budget-calculator" rel="noopener" href="https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/" style="text-decoration:none">前往預算計算機 →</a></div></div>
     </section>
   </main>
 
@@ -666,13 +666,11 @@
     function openBudgetCalculatorArticle(event) {
       const payload=budgetCalculatorPayload();
       if(!payload) return;
-      event.preventDefault();
       const targetUrl=buildBudgetCalculatorArticleUrl();
-      const popup=window.open(targetUrl,'_blank');
-      if(!popup) {
-        window.location.href=targetUrl;
-        return;
-      }
+      const popup=window.open('', 'pchome-rmn-budget-calculator');
+      if(!popup) return;
+      event.preventDefault();
+      popup.location.href=targetUrl;
       const token=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const calculatorUrl=buildBudgetCalculatorEmbedUrl(payload);
       let calculatorFrameRedirected=false;
