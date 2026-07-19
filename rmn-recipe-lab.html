@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="依投放目標、品牌條件與總預算，快速取得 PChome RMN 廣告版位與預算配置建議。" />
+  <meta name="robots" content="noindex,follow" />
+  <title>PChome RMN 投廣配方師｜廣告版位與預算規劃工具</title>
+  <style>
+    :root {
+      --ink:#263b4b; --muted:#627889; --paper:#f4f8fb; --line:#dbe7ef;
+      --navy:#0b2944; --blue:#078fd4; --blue-deep:#0879bb; --teal:#14a6ad;
+      --sky:#eaf7fd; --lime:#cde977; --orange:#f4a340; --white:#fff;
+      --shadow:0 12px 32px rgba(18,52,77,.10);
+    }
+    * { box-sizing:border-box; }
+    html,body { height:100%; overflow:hidden; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans TC","Microsoft JhengHei",sans-serif; line-height:1.5; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; }
+    .shell { width:min(1180px,100%); height:min(780px,100vh); margin:0 auto; padding:16px 22px; display:grid; grid-template-rows:auto auto minmax(0,1fr); gap:12px; }
+    .hero { position:relative; overflow:hidden; padding:22px 34px 20px; color:#fff; border-radius:18px; background:linear-gradient(120deg,#0797df 0%,#087fc3 68%,#0877b5 100%); box-shadow:var(--shadow); }
+    .hero:after { content:""; position:absolute; width:330px; height:330px; border:42px solid rgba(255,255,255,.11); border-radius:50%; right:-105px; top:-175px; }
+    .eyebrow { position:relative; z-index:1; display:inline-flex; gap:8px; align-items:center; color:#fff; font-weight:800; letter-spacing:.05em; font-size:.79rem; }
+    .eyebrow span { color:#d7f4ff; font-weight:700; letter-spacing:.02em; }
+    .hero h1 { position:relative; z-index:1; font-size:clamp(1.72rem,3.3vw,2.65rem); line-height:1.14; margin:8px 0; letter-spacing:-.035em; }
+    .hero p { position:relative; z-index:1; max-width:820px; margin:0; color:#e5f7ff; font-size:.92rem; }
+    .hero .note { position:relative; z-index:1; margin-top:12px; display:inline-block; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.17); padding:5px 10px; border-radius:999px; font-size:.75rem; }
+    .stepper { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:0; }
+    .step-dot { padding:11px 14px; border-radius:11px; background:#e7eef3; color:#718390; font-size:.88rem; font-weight:700; }
+    .step-dot b { display:inline-grid; place-items:center; width:22px; height:22px; margin-right:8px; border-radius:50%; background:#c7d5de; color:#fff; font-size:.75rem; }
+    .step-dot.active { background:var(--navy); color:#fff; } .step-dot.active b { background:#fff; color:var(--blue-deep); }
+    .panel { display:none; min-height:0; height:100%; overflow:hidden; border:1px solid #e6eef3; border-radius:18px; background:var(--white); box-shadow:var(--shadow); padding:24px 30px; }
+    .panel.active { display:block; animation:fade .22s ease; } @keyframes fade { from{opacity:.3; transform:translateY(8px)} to{opacity:1;transform:none} }
+    .panel-head { display:flex; gap:18px; justify-content:space-between; align-items:flex-end; margin-bottom:16px; }
+    .panel h2 { margin:0; font-size:1.58rem; letter-spacing:-.03em; } .panel-head p { margin:5px 0 0; color:var(--muted); }
+    .grid-2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    label.field { display:grid; gap:7px; color:#38505d; font-size:.9rem; font-weight:750; }
+    input,select,textarea { border:1px solid var(--line); border-radius:12px; color:var(--ink); background:#fff; padding:12px 13px; outline:none; }
+    input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(7,143,212,.12); }
+    textarea { min-height:92px; resize:vertical; font-weight:500; }
+    .hint { color:var(--muted); font-size:.82rem; font-weight:500; }
+    .cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .choice { position:relative; display:block; min-height:132px; border:1px solid var(--line); border-radius:14px; padding:14px 18px; background:#fff; transition:.16s; }
+    .choice:hover { border-color:#86c9e9; transform:translateY(-2px); box-shadow:0 8px 18px rgba(7,143,212,.08); }
+    .choice input { position:absolute; opacity:0; pointer-events:none; }
+    .choice:has(input:checked) { border-color:var(--blue); background:var(--sky); box-shadow:inset 4px 0 0 var(--blue); }
+    .multi-check { position:absolute; right:15px; top:15px; display:grid; place-items:center; width:25px; height:25px; border-radius:50%; border:2px solid #aac1cc; color:transparent; font-weight:900; }
+    .choice:has(input:checked) .multi-check { border-color:var(--blue); background:var(--blue); color:#fff; }
+    .choice .icon { font-size:1.45rem; } .choice strong { display:block; margin-top:7px; } .choice span { display:block; margin-top:4px; color:var(--muted); font-size:.84rem; }
+    .choice .priority-picker { display:flex; align-items:center; gap:7px; margin-top:7px; color:#38505d; font-size:.77rem; font-weight:800; }
+    .choice .priority-picker select { flex:1; padding:7px 8px; font-size:.78rem; }
+    .choice:not(:has(input:checked)) .priority-picker { opacity:.48; }
+    .dual-range { position:relative; height:28px; margin-top:6px; }
+    .dual-range .range-track,.dual-range .range-fill { position:absolute; top:12px; height:5px; border-radius:999px; }
+    .dual-range .range-track { left:0; right:0; background:#dfe8ed; }
+    .dual-range .range-fill { background:var(--blue); }
+    .dual-range input { position:absolute; left:0; top:0; width:100%; height:28px; margin:0; padding:0; appearance:none; background:transparent; pointer-events:none; }
+    .dual-range input::-webkit-slider-thumb { appearance:none; width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid var(--blue); box-shadow:0 1px 4px rgba(13,50,66,.25); pointer-events:auto; cursor:grab; }
+    .dual-range input::-moz-range-thumb { width:13px; height:13px; border-radius:50%; background:#fff; border:3px solid var(--blue); box-shadow:0 1px 4px rgba(13,50,66,.25); pointer-events:auto; cursor:grab; }
+    .option-set { margin-top:14px; } .option-title { display:flex; justify-content:space-between; gap:12px; align-items:baseline; margin-bottom:7px; font-size:.93rem; font-weight:850; }
+    .option-title small { color:var(--muted); font-weight:500; }
+    .toggle-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }
+    #placementChoices { grid-template-columns:repeat(5,minmax(0,1fr)); }
+    .toggle-card { position:relative; display:block; min-height:70px; padding:11px 12px; border:1px solid var(--line); border-radius:13px; background:#fff; cursor:pointer; }
+    .toggle-card input { position:absolute; opacity:0; pointer-events:none; }
+    .toggle-card:has(input:checked) { background:var(--sky); border-color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue); }
+    .toggle-card b { display:block; font-size:.9rem; } .toggle-card span { display:block; margin-top:3px; color:var(--muted); font-size:.73rem; line-height:1.25; }
+    .task-list { display:grid; gap:12px; }
+    .task { display:grid; grid-template-columns:minmax(180px,1fr) 150px; align-items:center; gap:15px; border:1px solid var(--line); border-radius:16px; padding:15px 16px; }
+    .task.disabled { opacity:.48; background:#fafbfc; }
+    .task-title { display:flex; align-items:center; gap:11px; } .task-title input { width:19px; height:19px; accent-color:var(--blue); }
+    .task-title b { display:block; } .task-title small { color:var(--muted); display:block; font-size:.78rem; margin-top:2px; }
+    .task input[type=range] { width:100%; padding:0; accent-color:var(--blue); }
+    .share { display:flex; align-items:center; gap:8px; font-weight:800; color:var(--blue); } .share output { width:42px; text-align:right; }
+    .importance { font-size:.83rem; padding:9px; }
+    .summary-bar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:16px; padding:14px 16px; border-radius:14px; background:#f0f5f7; }
+    .summary-bar strong { font-size:1.12rem; } .sum-ok { color:#1f702c; } .sum-error { color:#c13b46; }
+    .market-card { padding:17px; border-radius:14px; background:#f5fafc; border:1px solid #dfeaf1; }
+    .market-card h3 { margin:0 0 5px; font-size:1rem; } .market-card p { margin:0; color:var(--muted); font-size:.84rem; }
+    .market-impact { margin-top:10px; padding:9px 12px; border-left:4px solid var(--teal); border-radius:8px; background:#f0fafb; color:#47616e; font-size:.76rem; line-height:1.45; }
+    .market-impact b { color:var(--navy); }
+    .actions { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:28px; }
+    .btn { border:0; border-radius:10px; padding:12px 18px; font-weight:800; transition:.15s; }
+    .btn:hover { transform:translateY(-1px); } .btn:focus-visible { outline:3px solid rgba(7,143,212,.24); outline-offset:2px; }
+    .btn.primary { color:#fff; background:var(--blue-deep); } .btn.secondary { background:#edf3f7; color:var(--navy); } .btn.lime { background:var(--teal); color:#fff; }
+    .result { padding:18px 26px; background:#fff; }
+    .result-top { display:grid; grid-template-columns:1.25fr .75fr; gap:12px; margin-bottom:12px; }
+    .recipe-summary { padding:17px 20px; border-radius:15px; color:#fff; background:linear-gradient(120deg,#078fd4,#0879bb); }
+    .recipe-summary .tag { display:inline-block; border-radius:999px; background:#fff; color:var(--blue-deep); padding:5px 10px; font-weight:900; font-size:.78rem; }
+    .recipe-summary h2 { margin:7px 0 4px; font-size:1.5rem; } .recipe-summary p { margin:0; color:#e1f6ff; font-size:.84rem; }
+    .money { padding:16px 18px; border:1px solid var(--line); border-radius:15px; } .money small { color:var(--muted); font-weight:700; } .money b { display:block; color:var(--blue-deep); font-size:1.75rem; margin:4px 0; letter-spacing:-.05em; } .money span { color:var(--muted); font-size:.8rem; }
+    .result-section { margin-top:9px; } .result-section h3 { margin:0 0 6px; font-size:.95rem; }
+    .recipe-table-wrap { border:1px solid var(--line); border-radius:17px; overflow:hidden; }
+    .recipe-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:.82rem; }
+    .recipe-table th { padding:8px 12px; text-align:left; background:#edf7fb; color:#284b60; font-size:.75rem; }
+    .recipe-table td { padding:9px 12px; vertical-align:top; border-top:1px solid var(--line); color:#405965; }
+    .placement-table th:nth-child(1) { width:62%; } .placement-table th:nth-child(2) { width:38%; }
+    .task-table { table-layout:auto; font-size:.75rem; } .task-table th,.task-table td { white-space:nowrap; text-align:right; }
+    .task-table th:first-child,.task-table td:first-child { min-width:142px; text-align:left; white-space:normal; }
+    .task-total { color:var(--navy); font-weight:900; } .task-money { color:var(--blue); font-weight:800; } .task-empty { color:#9aa8b0; }
+    .placement-name { display:block; color:var(--navy); font-weight:900; } .placement-role { display:block; margin-top:3px; color:var(--muted); font-size:.74rem; }
+    .placement-money { color:var(--blue); font-size:1rem; font-weight:900; white-space:nowrap; }
+    .goal-list { display:flex; flex-wrap:wrap; gap:5px; } .goal-chip { padding:5px 7px; border-radius:9px; background:#edf6f9; color:#205a76; font-weight:750; font-size:.74rem; }
+    .pill { display:inline-block; margin:4px 4px 0 0; padding:5px 8px; border-radius:99px; background:#eaf4f8; color:#186188; font-size:.77rem; font-weight:800; }
+    .advisor { padding:10px 13px; border:1px solid #b9dce9; border-radius:14px; background:linear-gradient(135deg,#eefaff,#fff); }
+    .advisor ul { margin:0; padding-left:19px; color:#405965; font-size:.79rem; line-height:1.45; } .advisor li+li { margin-top:3px; }
+    .result .actions { margin-top:13px; }
+    .footnote { margin-top:12px; padding:10px 13px; border-left:4px solid var(--orange); background:#fff8ed; color:#745231; font-size:.77rem; }
+    .hide { display:none!important; }
+    @media (max-width:760px) {
+      html,body { overflow:auto; } .shell { height:auto; min-height:100%; padding:16px 12px 46px; display:block; } .hero { padding:30px 24px; border-radius:20px; } .stepper { margin:14px 0; } .panel { height:auto; overflow:visible; padding:22px 17px; border-radius:20px; }
+      .stepper { grid-template-columns:repeat(2,1fr); } .grid-2,.grid-3,.cards,.result-top,.toggle-grid { grid-template-columns:1fr; }
+      .task { grid-template-columns:1fr; gap:9px; } .recipe-table { table-layout:auto; } .recipe-table-wrap { overflow:auto; } .panel-head { align-items:start; flex-direction:column; }
+      .actions { flex-wrap:wrap; } .actions .btn { flex:1; } .summary-bar { align-items:start; flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">PChome Ads <span>｜RMN 投廣輔助工具</span></div>
+      <h1>先選投放目標，再配出可執行的廣告預算。</h1>
+      <p>依本期目標、品牌條件與總預算，快速取得 PChome RMN 版位與預算配置建議。</p>
+    </section>
+
+    <nav class="stepper" aria-label="規劃進度">
+      <div class="step-dot active" data-step-dot="1"><b>1</b>投放目標</div>
+      <div class="step-dot" data-step-dot="2"><b>2</b>投放條件</div>
+      <div class="step-dot" data-step-dot="3"><b>3</b>配方結果</div>
+    </nav>
+
+    <section class="panel active" data-panel="1">
+      <div class="panel-head"><div><h2>這一期想完成哪些投放目標？</h2><p>可複選。必要預算是本期必做；加強預算是額外加碼；可選預算則在有餘裕時安排。目前已選 <b id="missionSelectionCount" aria-live="polite">1</b> 個。</p></div><span class="pill">可複選</span></div>
+      <div class="cards" id="missionCards">
+        <label class="choice"><input type="checkbox" value="always" checked><i class="multi-check">✓</i><div class="icon">↗</div><strong>常態導購</strong><span>承接既有搜尋需求，維持主力商品的成交基本盤。</span><div class="priority-picker">本期優先序<select data-priority="always"><option value="必要預算" selected>必要預算｜本期必做</option><option value="加強預算">加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
+        <label class="choice"><input type="checkbox" value="launch"><i class="multi-check">✓</i><div class="icon">✦</div><strong>新品上市</strong><span>讓新品被看見，逐步累積商品認知與搜尋需求。</span><div class="priority-picker">本期優先序<select data-priority="launch"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算" selected>加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
+        <label class="choice"><input type="checkbox" value="promo"><i class="multi-check">✓</i><div class="icon">⚡</div><strong>檔期衝刺</strong><span>在預熱、主檔與返場集中加碼，放大檔期成交機會。</span><div class="priority-picker">本期優先序<select data-priority="promo"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算" selected>加強預算｜額外加碼</option><option value="可選預算">可選預算｜有餘裕再做</option></select></div></label>
+        <label class="choice"><input type="checkbox" value="brand"><i class="multi-check">✓</i><div class="icon">◌</div><strong>品牌經營</strong><span>讓消費者理解品牌主張、商品特色與完整商品線。</span><div class="priority-picker">本期優先序<select data-priority="brand"><option value="必要預算">必要預算｜本期必做</option><option value="加強預算">加強預算｜額外加碼</option><option value="可選預算" selected>可選預算｜有餘裕再做</option></select></div></label>
+      </div>
+      <div style="margin-top:18px">
+        <div class="market-card"><h3>設定投放期間與預算</h3><div class="grid-2" style="margin-top:10px"><label class="field">開始日期<input id="flightStart" type="date"></label><label class="field">結束日期<input id="flightEnd" type="date"></label></div><label class="field" style="margin-top:10px">本期總預算（NT$）<input id="totalBudget" type="number" min="0" step="100" value="50000"></label><label class="field" style="margin-top:10px">投放天數：<b id="flightDaysLabel">30 天</b><div class="dual-range"><span class="range-track"></span><span class="range-fill" id="flightRangeFill"></span><input id="flightStartRange" type="range" min="0" max="91" value="0" aria-label="投放開始日"><input id="flightEndRange" type="range" min="0" max="91" value="29" aria-label="投放結束日"></div></label></div>
+      </div>
+      <div class="actions"><span class="hint">完成後仍可返回調整。</span><button class="btn primary" data-next="2">下一步：評估投放條件 →</button></div>
+    </section>
+
+    <section class="panel" data-panel="2">
+      <div class="panel-head"><div><h2>評估這一期的投放條件</h2><p>請依目前實際狀況選擇，系統會調整版位的優先性與預算權重。</p></div></div>
+      <div class="grid-3">
+        <label class="field">品牌認知度<select id="brandStrength"><option value="1">1 分｜剛起步</option><option value="2">2 分｜少數消費者認識</option><option value="3" selected>3 分｜已有初步認識</option><option value="4">4 分｜已有穩定客群</option><option value="5">5 分｜具明確品牌知名度</option></select><span class="hint">請依消費者是否認識、主動指名或回購品牌自評。</span></label>
+        <label class="field">關鍵字品類競爭度<select id="competition"><option value="1">1 分｜沒有競品投廣</option><option value="2">2 分｜看見 1～3 個競品投廣</option><option value="3" selected>3 分｜看見 4 個以上競品投廣</option></select><span class="hint">請搜尋主力產品字後，再依搜尋結果自評。</span></label>
+        <label class="field">ROAS 承受度<select id="investment"><option value="1">1 分｜低：效率優先</option><option value="2" selected>2 分｜中：平衡成長</option><option value="3">3 分｜高：可接受較低 ROAS 換取拓新</option></select></label>
+      </div>
+      <div class="market-impact" id="marketImpactSummary"></div>
+      <section class="option-set"><div class="option-title"><span>這次有哪些版位可以使用？</span><small>預設全選；若有素材、檔期或執行限制，可取消版位。</small></div><div class="toggle-grid" id="placementChoices">
+        <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b><span>接住已在找商品、比價或比較規格的消費者，作為成交基本盤。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b><span>在 APP 首頁放大當期主打商品、檔期或品牌訊息的曝光機會。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b><span>在 Web 首頁放大當期主打商品、檔期或品牌訊息的曝光機會。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="brand" checked><b>品牌帶貨廣告</b><span>以主視覺搭配商品卡，快速說明商品資訊與品牌主打特色。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b><span>提醒曾互動或已有相關需求的消費者回訪商品頁。</span></label>
+      </div></section>
+      <div class="actions"><button class="btn secondary" data-back="1">← 返回投放目標</button><button class="btn lime" id="buildRecipe">產生版位與預算建議 →</button></div>
+    </section>
+
+    <section class="panel result" data-panel="3">
+      <div class="result-top">
+        <div class="recipe-summary"><span class="tag">PChome RMN 投放規劃</span><h2>你的版位與預算建議</h2><p>先看本期版位配置，再確認各項投放目標如何拆分。</p></div>
+        <div class="money"><small>本期總預算</small><b id="resultBudget">$0</b><span id="resultFlight">尚未設定投放期間</span></div>
+      </div>
+      <section class="result-section"><h3>版位與預算</h3><div class="recipe-table-wrap"><table class="recipe-table placement-table"><thead><tr><th>採用版位</th><th>版位預算</th></tr></thead><tbody id="recipeTable"></tbody></table></div></section>
+      <section class="result-section"><h3>各任務配置</h3><div class="recipe-table-wrap"><table class="recipe-table task-table" id="taskTable"></table></div></section>
+      <section class="result-section"><h3>投放建議</h3><div class="advisor" id="advisorSummary"></div></section>
+      <div class="actions"><button class="btn secondary" data-back="2">← 返回調整條件</button><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="copyPlan">複製規劃摘要</button><button class="btn primary" id="downloadPlan">下載規劃摘要</button><a class="btn lime" id="budgetTool" target="_blank" rel="noopener" href="https://amberwu-tmx.github.io/PChome-budget-tool/index.html" style="text-decoration:none">接著安排投放節奏 →</a></div></div>
+    </section>
+  </main>
+
+  <script>
+    const TASKS = {
+      always:{ icon:'↗', name:'常態導購', desc:'承接既有搜尋需求，維持主力商品的成交基本盤。', defaultShare:40, defaultImportance:'必要', phase:'全期執行，作為成交與導流底盤。', products:'主力 3–5 支商品，優先選穩定供貨與已有成交證據的品項。', creative:'商品利益點、價格／優惠與明確購買理由要一眼看懂。' },
+      launch:{ icon:'✦', name:'新品上市', desc:'讓新品被看見，逐步累積商品認知與搜尋需求。', defaultShare:25, defaultImportance:'重要', phase:'建議在前半期集中曝光與互動觀察，逐步建立新品認知。', products:'只選 1–3 支英雄新品，避免一次推整個新品群。', creative:'一個商品、一個核心利益點、一個現在值得認識它的理由。' },
+      promo:{ icon:'⚡', name:'檔期衝刺', desc:'在預熱、主檔與返場集中加碼，放大檔期成交機會。', defaultShare:25, defaultImportance:'必要', phase:'依預熱 → 主檔 → 返場安排，主檔日集中加壓。', products:'選促銷組合、高轉換品與最能呼應節慶的商品。', creative:'優惠、截止日期、送禮／節慶情境與行動理由要清楚。' },
+      brand:{ icon:'◌', name:'品牌經營', desc:'讓消費者理解品牌主張、商品特色與完整商品線。', defaultShare:15, defaultImportance:'可選預算', phase:'可常態低頻運行，或在新品與大檔前後加強。', products:'用完整商品線、明星品與延伸品呈現可探索的品牌路徑。', creative:'先講品牌為何值得買，再引導到商品線與挑選方式。' }
+    };
+    const state = { tasks:{always:true,launch:false,promo:false,brand:false}, importance:{always:'必要預算',launch:'加強預算',promo:'加強預算',brand:'可選預算'} };
+    const $ = (s) => document.querySelector(s);
+    const allocationRoundingUnit=100;
+    const formatMoney = (n) => '$' + Math.round(n || 0).toLocaleString('zh-TW');
+    const roundAllocation = n => Math.round((n || 0) / allocationRoundingUnit) * allocationRoundingUnit;
+    const activeTasks = () => Object.keys(TASKS).filter(key => state.tasks[key]);
+    const taipeiTimeZone='Asia/Taipei';
+    const taipeiDateFormatter=new Intl.DateTimeFormat('en-US',{timeZone:taipeiTimeZone,year:'numeric',month:'2-digit',day:'2-digit'});
+    const formatDate = date => {
+      const parts=Object.fromEntries(taipeiDateFormatter.formatToParts(date).filter(part=>part.type!=='literal').map(part=>[part.type,part.value]));
+      return `${parts.year}-${parts.month}-${parts.day}`;
+    };
+    const parseDate = dateString => new Date(`${dateString}T00:00:00Z`);
+    const addDays = (dateString, days) => { const date=parseDate(dateString); date.setUTCDate(date.getUTCDate()+days); return formatDate(date); };
+    const flightLabel = () => ($('#flightStart').value && $('#flightEnd').value) ? `${$('#flightStart').value}–${$('#flightEnd').value}` : '尚未設定投放期間';
+    const planningStart = formatDate(new Date());
+    const planningEnd = addDays(planningStart,91);
+    const dayOffset = date => Math.round((parseDate(date)-parseDate(planningStart))/86400000);
+    function renderFlightRange() {
+      const start=Number($('#flightStartRange').value), end=Number($('#flightEndRange').value);
+      $('#flightRangeFill').style.left=`${start/91*100}%`; $('#flightRangeFill').style.right=`${100-end/91*100}%`;
+      $('#flightDaysLabel').textContent=`${end-start+1} 天`;
+    }
+    function updateDatesFromRange(changed) {
+      let start=Number($('#flightStartRange').value), end=Number($('#flightEndRange').value);
+      if(changed==='start' && start>end) { end=start; $('#flightEndRange').value=end; }
+      if(changed==='end' && end<start) { start=end; $('#flightStartRange').value=start; }
+      $('#flightStart').value=addDays(planningStart,start); $('#flightEnd').value=addDays(planningStart,end); renderFlightRange();
+    }
+    function updateRangeFromDates(changed) {
+      let start=Math.max(0,Math.min(91,dayOffset($('#flightStart').value))), end=Math.max(0,Math.min(91,dayOffset($('#flightEnd').value)));
+      if(changed==='start' && start>end) end=start;
+      if(changed==='end' && end<start) start=end;
+      $('#flightStartRange').value=start; $('#flightEndRange').value=end;
+      $('#flightStart').value=addDays(planningStart,start); $('#flightEnd').value=addDays(planningStart,end); renderFlightRange();
+    }
+    function updateMissionSelectionCount() {
+      $('#missionSelectionCount').textContent=document.querySelectorAll('#missionCards input:checked').length;
+      document.querySelectorAll('#missionCards .choice').forEach(card=>{
+        const checkbox=card.querySelector('input[type="checkbox"]');
+        const priority=card.querySelector('[data-priority]');
+        if(priority) priority.disabled=!checkbox.checked;
+      });
+    }
+    function renderMarketImpacts() {
+      $('#marketImpactSummary').innerHTML='<b>這些設定會一起改變版位的優先性與預算權重。</b>';
+    }
+    function showStep(step) {
+      document.querySelectorAll('[data-panel]').forEach(p => p.classList.toggle('active', p.dataset.panel === String(step)));
+      document.querySelectorAll('[data-step-dot]').forEach(d => d.classList.toggle('active', Number(d.dataset.stepDot) <= step));
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function syncMissions() {
+      document.querySelectorAll('#missionCards input').forEach(input => { state.tasks[input.value] = input.checked; });
+      const active = activeTasks();
+      if (!active.length) { state.tasks.always = true; document.querySelector('#missionCards input[value="always"]').checked = true; active.push('always'); }
+      updateMissionSelectionCount();
+    }
+    function getPosture() {
+      const brand=Number($('#brandStrength').value), comp=Number($('#competition').value);
+      if(brand>=4 && comp>=3) return {name:'防守擴張型', text:'品牌已有基礎但同類競爭強。保留需求承接底盤，同時在關鍵檔期與商品線經營中維持品牌存在感。'};
+      if(brand>=4 && comp<=2) return {name:'效率收割型', text:'已有品牌基礎且市場空間仍在。先有效率收割既有需求，再挑選新品或品類做擴張。'};
+      if(brand<=2 && comp>=3) return {name:'窄門突圍型', text:'不與大品牌做無差別曝光競爭；集中英雄商品、清楚賣點與高相關購物情境，先找到可放大的切口。'};
+      return {name:'品類佔位型', text:'品牌仍在建立、但品類競爭較低。保留成交基礎，同時以新品與品牌訊息搶先建立品類印象。'};
+    }
+    const placementNames={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',brand:'品牌帶貨廣告',recommend:'全站推薦廣告'};
+    const tierNames={t0:'T0 核心消費者',t1:'T1 再行銷受眾',t2:'T2 同品類受眾',t3:'T3 跨品類受眾'};
+    const checkedValues = selector => [...document.querySelectorAll(`${selector} input:checked`)].map(input=>input.value);
+    const taskAudienceScores={
+      always:{t0:5,t1:2,t2:1,t3:0},
+      launch:{t0:4,t1:3,t2:2,t3:1},
+      promo:{t0:5,t1:4,t2:3,t3:2},
+      brand:{t0:1,t1:2,t2:4,t3:3}
+    };
+    const audiencePlacementScores={
+      t0:{keyword:10,recommend:2,brand:0,appBanner:0,webBanner:0},
+      t1:{keyword:9,recommend:3,brand:2,appBanner:1,webBanner:1},
+      t2:{keyword:7,recommend:3,brand:3,appBanner:2,webBanner:2},
+      t3:{keyword:5,recommend:1,brand:4,appBanner:4,webBanner:4}
+    };
+    function marketAudienceScores(task) {
+      return {...taskAudienceScores[task]};
+    }
+    const marketPlacementFactors={
+      brand:{
+        1:{keyword:1,recommend:.35,brand:.60,appBanner:.60,webBanner:.60},
+        2:{keyword:1,recommend:.50,brand:.65,appBanner:.65,webBanner:.65},
+        3:{keyword:1.05,recommend:.70,brand:.70,appBanner:.70,webBanner:.70},
+        4:{keyword:1.20,recommend:1,brand:.85,appBanner:.85,webBanner:.85},
+        5:{keyword:1.25,recommend:1.05,brand:.95,appBanner:.95,webBanner:.95}
+      },
+      competition:{
+        1:{keyword:1.20,recommend:.80,brand:.70,appBanner:.65,webBanner:.65},
+        2:{keyword:1.15,recommend:1.10,brand:1.15,appBanner:1.20,webBanner:1.20},
+        3:{keyword:1,recommend:1.25,brand:1.35,appBanner:1.50,webBanner:1.50}
+      },
+      roas:{
+        1:{keyword:1.25,recommend:.60,brand:.40,appBanner:.30,webBanner:.30},
+        2:{keyword:1.10,recommend:.95,brand:.90,appBanner:.85,webBanner:.80},
+        3:{keyword:1,recommend:1.20,brand:1.25,appBanner:1.40,webBanner:1.35}
+      }
+    };
+    function marketPlacementScores() {
+      const brand=marketPlacementFactors.brand[Number($('#brandStrength').value)];
+      const competition=marketPlacementFactors.competition[Number($('#competition').value)];
+      const roas=marketPlacementFactors.roas[$('#investment').value];
+      return Object.fromEntries(Object.keys(brand).map(placement=>[
+        placement,brand[placement]*competition[placement]*roas[placement]
+      ]));
+    }
+    function selectPlacements(task, amount, total) {
+      const audienceTiers=['t0','t1','t2','t3'], allowedPlacements=checkedValues('#placementChoices');
+      const raw={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0}, tierAllocation={t0:0,t1:0,t2:0,t3:0};
+      if(!allowedPlacements.length) return {weights:raw,selected:[],deferred:[],tierAllocation,advice:'請至少保留一個版位，才能產生配方。',noPlan:true};
+      const audienceScores=marketAudienceScores(task), marketScores=marketPlacementScores();
+      const tierTotal=audienceTiers.reduce((sum,tier)=>sum+audienceScores[tier],0);
+      audienceTiers.forEach(tier=>{
+        const tierScore=audienceScores[tier];
+        tierAllocation[tier]=tierScore/tierTotal;
+        allowedPlacements.forEach(placement=>{
+          raw[placement]+=tierScore*(audiencePlacementScores[tier][placement]||0)*marketScores[placement];
+        });
+      });
+      const ranked=Object.entries(raw).filter(([,weight])=>weight>0).sort((a,b)=>b[1]-a[1]);
+      if(!ranked.length) return {weights:raw,selected:[],deferred:[],tierAllocation,advice:'目前保留的版位無法對應此任務，請至少保留關鍵字廣告。',noPlan:true};
+      const share=total?amount/total*100:0;
+      const requestedNonKeyword=allowedPlacements.filter(placement=>placement!=='keyword');
+      const keywordAvailable=allowedPlacements.includes('keyword');
+      const canKeepAllRequested=requestedNonKeyword.length>0
+        && requestedNonKeyword.length<=2
+        && Math.max(0,total-(keywordAvailable?getKeywordBase(total):0))>=requestedNonKeyword.length*placementBudgetFloor;
+      const cap=canKeepAllRequested
+        ? Math.min(ranked.length,1+requestedNonKeyword.length)
+        : share<=20?1:share<=50?2:3;
+      const keywordEntry=ranked.find(([placement])=>placement==='keyword');
+      const nonKeywordRanked=ranked.filter(([placement])=>placement!=='keyword');
+      // 所有本期勾選的版位都先參與積分計算；整期匯總後才以 NT$2,000 門檻取捨。
+      const selected=ranked;
+      const selectedTotal=selected.reduce((sum,[,weight])=>sum+weight,0), finalWeights={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0};
+      selected.forEach(([placement,weight])=>finalWeights[placement]=weight/selectedTotal);
+      const deferred=ranked.filter(([placement])=>!selected.some(([selectedPlacement])=>selectedPlacement===placement)).map(([placement])=>placement);
+      const advice=deferred.length ? `此任務占本期 ${share}％；先保留積分最高的 ${selected.length} 個版位，避免預算分散。` : '目前可用版位皆已納入此任務。';
+      return {weights:finalWeights,selected:selected.map(([placement])=>placement),deferred,tierAllocation,advice,noPlan:false};
+    }
+    function roles(task, amount, total) {
+      const profile=$('#investment').value;
+      const base = { keyword:'接住主動搜尋需求', appBanner:'在 APP 首頁放大當期主打商品', webBanner:'在 Web 首頁放大當期主打商品', recommend:'提醒曾互動或有相關需求的消費者回訪商品頁', brand:'用主視覺與商品卡說明商品特色' };
+      const placementPlan=selectPlacements(task,amount,total), weights=placementPlan.weights;
+      const core=placementPlan.selected.length ? placementPlan.selected.map(k=>`<span class="pill">${placementNames[k]}</span>`).join('') : '尚無可計算版位';
+      const tiers=Object.entries(placementPlan.tierAllocation).filter(([,weight])=>weight>0).map(([tier,weight])=>`<span class="pill">${tierNames[tier]} ${Math.round(weight*100)}%</span>`).join('') || '尚無可計算受眾層';
+      let audience='依主推商品選擇高相關品類與購物情境，避免一開始將受眾過度分散。';
+      if(task==='always') audience='以主力商品的需求承接與相關品類探索為主，建立可持續的成交底盤。';
+      if(task==='launch') audience='優先讓新品進入再行銷與同品類探索情境；若已有搜尋需求，再用 T0 承接。';
+      if(task==='promo') audience='將檔期優惠優先呈現在可能有購買需求的商品與品類接觸情境，主檔集中加壓。';
+      if(task==='brand') audience='先讓品牌與商品線在可探索的購物情境中被理解，再導向主打品。';
+      let guard=profile==='1'?'效率優先：先集中 1–2 個核心版位，不追求全版位同時開啟。':'可保留一部分預算給新品探索、品牌訊息或創意測試。';
+      return {core,tiers,audience,guard,base,weights,placementPlan};
+    }
+    const placementBudgetFloor=2000;
+    const keywordBudgetFloor=5000;
+    const keywordPriorityRate=.60;
+    const goalPackage=placementBudgetFloor;
+    const priorityOrder=['必要預算','加強預算','可選預算'];
+    const importanceScore={必要預算:3,加強預算:2,可選預算:1};
+    const keywordTierWeights={t0:.60,t1:.25,t2:.10,t3:.05};
+    const keywordTierLabels={
+      t0:'核心商品字｜產品字、規格字',
+      t1:'再行銷品牌字',
+      t2:'同品類商品字、競品字',
+      t3:'相關情境字、檔期字'
+    };
+    function getKeywordBase(total) {
+      return Math.min(total,Math.max(keywordBudgetFloor,Math.round(total*keywordPriorityRate)));
+    }
+    function keywordTierAllocation(amount) {
+      const available=['t0','t1','t2','t3'];
+      const weightTotal=available.reduce((sum,tier)=>sum+keywordTierWeights[tier],0);
+      return available.map(tier=>({
+        tier,
+        weight:weightTotal?keywordTierWeights[tier]/weightTotal:0,
+        amount:weightTotal?amount*keywordTierWeights[tier]/weightTotal:0
+      }));
+    }
+    function keywordDirection(task) {
+      const directions={
+        always:'主力商品的產品字、規格字與品牌字為主，穩定承接已形成的購買需求。',
+        launch:'新品的產品字、規格字優先；再用品牌字與相關情境字，逐步確認新品搜尋需求。',
+        promo:'主力商品字搭配檔期字、優惠字；主檔期間再加強高意圖字詞。',
+        brand:'以品牌字、商品線字與高關聯品類字建立可被搜尋與理解的入口。'
+      };
+      return directions[task];
+    }
+    const priorityWeight={必要預算:1,加強預算:.75,可選預算:.5};
+    function distributeGoalBudget(plans, budget) {
+      const totalWeight=plans.reduce((sum,plan)=>sum+priorityWeight[state.importance[plan.key]],0);
+      if(!totalWeight || !budget) return;
+      plans.forEach(plan=>{ plan.amount+=budget*priorityWeight[state.importance[plan.key]]/totalWeight; });
+    }
+    function allocateGoalPool(total) {
+      const plans=activeTasks().map(key=>({key,amount:0}));
+      const committed=plans.filter(plan=>state.importance[plan.key]!=='可選預算');
+      const protectedGoals=committed.length?committed:plans;
+      const protectedBudget=Math.min(total,protectedGoals.length*placementBudgetFloor);
+      distributeGoalBudget(protectedGoals,protectedBudget);
+      distributeGoalBudget(plans,total-protectedBudget);
+      return {plans,unallocated:0};
+    }
+    function allocateKeywordTaskBudgets(total) {
+      return allocateGoalPool(total);
+    }
+    function allocateTaskBudgets(total) {
+      const keywordBudget=getKeywordBase(total);
+      const taskPool=allocateGoalPool(Math.max(0,total-keywordBudget));
+      return {keywordBudget,plans:taskPool.plans,unallocated:taskPool.unallocated};
+    }
+    function updateRolePlacements(taskPlan, selected, deferred, advice) {
+      const role=taskPlan.r, plan=role.placementPlan;
+      const selectedWeight=selected.reduce((sum,placement)=>sum+plan.weights[placement],0);
+      const weights={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0};
+      selected.forEach(placement=>weights[placement]=plan.weights[placement]/selectedWeight);
+      plan.selected=selected; plan.deferred=[...new Set([...plan.deferred,...deferred])]; plan.weights=weights; plan.advice=advice;
+      role.weights=weights; role.core=selected.map(placement=>`<span class="pill">${placementNames[placement]}</span>`).join('');
+    }
+    function applyPlacementFloor(taskPlans) {
+      const paused=[];
+      taskPlans.forEach(taskPlan=>{
+        const plan=taskPlan.r.placementPlan;
+        if(taskPlan.paused) return;
+        if(plan.noPlan) {
+          taskPlan.paused=true;
+          taskPlan.pauseReason=plan.advice;
+          paused.push(taskPlan);
+          return;
+        }
+        let selected=[...plan.selected], removed=[];
+        while(selected.length>1) {
+          const selectedWeight=selected.reduce((sum,placement)=>sum+plan.weights[placement],0);
+          const allocations=selected.map(placement=>({placement,amount:taskPlan.amount*plan.weights[placement]/selectedWeight}));
+          const smallest=allocations.sort((a,b)=>a.amount-b.amount)[0];
+          if(smallest.amount>=placementBudgetFloor) break;
+          selected=selected.filter(placement=>placement!==smallest.placement); removed.push(smallest.placement);
+        }
+        if(selected.length===1 && taskPlan.amount<placementBudgetFloor) {
+          taskPlan.paused=true; taskPlan.pauseReason=`只保留 ${placementNames[selected[0]]} 仍只有 ${formatMoney(taskPlan.amount)}，未達每版位 ${formatMoney(placementBudgetFloor)} 的建議配置。`;
+          paused.push(taskPlan); return;
+        }
+        if(removed.length) updateRolePlacements(taskPlan,selected,removed,`原本拆分後有版位低於 ${formatMoney(placementBudgetFloor)}；已先收斂 ${removed.map(placement=>placementNames[placement]).join('、')}，讓保留版位各自至少有 ${formatMoney(placementBudgetFloor)}。`);
+      });
+      const survivors=taskPlans.filter(taskPlan=>!taskPlan.paused && !taskPlan.r.placementPlan.noPlan);
+      const released=paused.reduce((sum,taskPlan)=>sum+taskPlan.amount,0);
+      if(released && survivors.length) {
+        const scoreTotal=survivors.reduce((sum,taskPlan)=>sum+importanceScore[state.importance[taskPlan.key]]*Math.max(taskPlan.amount,1),0);
+        survivors.forEach(taskPlan=>{
+          const added=released*(importanceScore[state.importance[taskPlan.key]]*Math.max(taskPlan.amount,1))/scoreTotal;
+          taskPlan.amount+=added; taskPlan.reallocatedIn=added;
+        });
+      }
+      if(released && !survivors.length) {
+        taskPlans.filter(taskPlan=>taskPlan.paused).forEach(taskPlan=>{ taskPlan.keywordFallback=true; });
+      }
+      return {paused,released,keywordReallocation:survivors.length?0:released};
+    }
+    function roundFinalAllocations(taskPlans, placementKeys, total) {
+      const entries=[];
+      taskPlans.forEach(plan=>placementKeys.forEach(placement=>{
+        if((plan.allocations[placement]||0)>0) entries.push({plan,placement});
+      }));
+      entries.forEach(({plan,placement})=>{ plan.allocations[placement]=roundAllocation(plan.allocations[placement]); });
+      const roundedTotal=roundAllocation(total);
+      let difference=roundedTotal-entries.reduce((sum,{plan,placement})=>sum+(plan.allocations[placement]||0),0);
+      if(!difference) return;
+      const preferred=entries
+        .map(({plan,placement})=>({plan,placement,amount:plan.allocations[placement]||0}))
+        .filter(entry=>entry.placement==='keyword' && entry.amount+difference>=0)
+        .sort((a,b)=>b.amount-a.amount)[0]
+        || entries.filter(entry=>entry.amount+difference>=0).sort((a,b)=>b.amount-a.amount)[0];
+      if(preferred) preferred.plan.allocations[preferred.placement]+=difference;
+    }
+    function renderAdvisor(taskPlans, total, aggregate, placementGoals, floorResult={removedPlacements:[]}) {
+      const advice=[];
+      const percentage=amount=>`${Math.round(amount/total*100)}％`;
+      if(aggregate.keyword>0) advice.push(`<li><b>成交入口：</b>關鍵字廣告配置 ${formatMoney(aggregate.keyword)}（${percentage(aggregate.keyword)}），作為主力優先承接主動搜尋。主打品牌字、商品字、規格字、競品字，其次為檔期字、需求字、情境字。</li>`);
+      const placementAdvice={
+        recommend:amount=>`<li><b>提醒回訪：</b>全站推薦廣告配置 ${formatMoney(amount)}（${percentage(amount)}），用來提醒曾互動或已有相關需求的消費者回到商品頁，不承擔新品的冷啟動曝光。</li>`,
+        brand:amount=>`<li><b>放大商品特色：</b>品牌帶貨廣告配置 ${formatMoney(amount)}（${percentage(amount)}），以主視覺搭配商品卡，讓消費者一次理解商品資訊與品牌主打特色。</li>`
+      };
+      Object.entries(placementAdvice)
+        .filter(([placement])=>aggregate[placement]>0)
+        .sort(([a],[b])=>aggregate[b]-aggregate[a])
+        .forEach(([placement,copy])=>advice.push(copy(aggregate[placement])));
+      const homepageAllocations=[
+        aggregate.appBanner>0 ? `APP 首頁焦點橫幅廣告配置 ${formatMoney(aggregate.appBanner)}（${percentage(aggregate.appBanner)}）` : '',
+        aggregate.webBanner>0 ? `Web 首頁瘋搶下橫幅廣告配置 ${formatMoney(aggregate.webBanner)}（${percentage(aggregate.webBanner)}）` : ''
+      ].filter(Boolean);
+      if(homepageAllocations.length) advice.push(`<li><b>首頁曝光：</b>${homepageAllocations.join('，')}，在首頁放大當期主打商品的曝光機會。</li>`);
+      if(floorResult.removedPlacements.length) {
+        const fallback=aggregate.keyword>0?'關鍵字廣告':'本期保留的版位';
+        advice.push(`<li><b>本期暫不分散：</b>${floorResult.removedPlacements.map(key=>placementNames[key]).join('、')} 的評估配置不足 NT$${placementBudgetFloor.toLocaleString('zh-TW')}，這筆預算先集中回${fallback}。</li>`);
+      }
+      if(!advice.length) advice.push('<li>目前已依投放目標與可用版位產生配置。</li>');
+      $('#advisorSummary').innerHTML=`<ul>${advice.join('')}</ul>`;
+    }
+    function buildRecipe() {
+      const total=roundAllocation(Number($('#totalBudget').value)||0), posture=getPosture();
+      $('#totalBudget').value=total;
+      $('#resultBudget').textContent=formatMoney(total); $('#resultFlight').textContent=flightLabel();
+      const labels={keyword:['關鍵字廣告','接住主動搜尋需求'],appBanner:['APP 首頁焦點橫幅廣告','APP 首頁主視覺曝光'],webBanner:['Web 首頁瘋搶下橫幅廣告','Web 首頁主視覺曝光'],recommend:['全站推薦廣告','提醒消費者回訪商品頁'],brand:['品牌帶貨廣告','主視覺＋商品卡']};
+      const placementKeys=Object.keys(labels);
+      const keywordEnabled=checkedValues('#placementChoices').includes('keyword');
+      const keywordBase=keywordEnabled?getKeywordBase(total):0;
+      const active=activeTasks();
+      const committedCount=active.filter(key=>state.importance[key]!=='可選預算').length;
+      const optionalEligible=!committedCount || total>keywordBase+committedCount*placementBudgetFloor;
+      const goalWeight=key=>state.importance[key]==='可選預算' && !optionalEligible?0:priorityWeight[state.importance[key]];
+      const goalWeightTotal=active.reduce((sum,key)=>sum+goalWeight(key),0);
+      const taskPlans=active.map(key=>{
+        const ratio=goalWeightTotal?goalWeight(key)/goalWeightTotal:0;
+        const amount=total*ratio, r=roles(key,amount,total);
+        const weights=r.placementPlan.noPlan?{keyword:1,appBanner:0,webBanner:0,recommend:0,brand:0}:r.weights;
+        const allocations=Object.fromEntries(placementKeys.map(placement=>[placement,amount*(weights[placement]||0)]));
+        return {key,ratio,amount,r,allocations,keywordAmount:allocations.keyword,paused:false};
+      });
+      const summarize=()=>{
+        const aggregate=Object.fromEntries(placementKeys.map(placement=>[placement,0]));
+        const placementGoals=Object.fromEntries(placementKeys.map(placement=>[placement,[]]));
+        taskPlans.forEach(plan=>{
+          plan.amount=placementKeys.reduce((sum,placement)=>sum+(plan.allocations[placement]||0),0);
+          plan.keywordAmount=plan.allocations.keyword||0;
+          placementKeys.forEach(placement=>{
+            const amount=plan.allocations[placement]||0;
+            if(amount<=0) return;
+            aggregate[placement]+=amount;
+            placementGoals[placement].push({key:plan.key,amount});
+          });
+        });
+        return {aggregate,placementGoals};
+      };
+      let {aggregate,placementGoals}=summarize();
+      const keywordShortfall=Math.max(0,keywordBase-aggregate.keyword);
+      const nonKeywordTotal=placementKeys.filter(placement=>placement!=='keyword').reduce((sum,placement)=>sum+aggregate[placement],0);
+      if(keywordShortfall && nonKeywordTotal) {
+        taskPlans.forEach(plan=>placementKeys.filter(placement=>placement!=='keyword').forEach(placement=>{
+          const moved=keywordShortfall*(plan.allocations[placement]||0)/nonKeywordTotal;
+          plan.allocations[placement]-=moved;
+          plan.allocations.keyword+=moved;
+        }));
+      }
+      const floorResult={paused:[],released:0,keywordReallocation:0,removedPlacements:[]};
+      const removed=new Set();
+      while(true) {
+        ({aggregate,placementGoals}=summarize());
+        const underFloor=placementKeys.filter(placement=>placement!=='keyword' && aggregate[placement]>0 && aggregate[placement]<placementBudgetFloor && !removed.has(placement));
+        if(!underFloor.length) break;
+        underFloor.forEach(placement=>{
+          removed.add(placement);
+          floorResult.removedPlacements.push(placement);
+          taskPlans.forEach(plan=>{
+            const moved=plan.allocations[placement]||0;
+            if(!moved) return;
+            plan.allocations[placement]=0;
+            const candidates=placementKeys.filter(key=>key!==placement && !removed.has(key) && (plan.r.weights[key]||0)>0);
+            const weightTotal=candidates.reduce((sum,key)=>sum+plan.r.weights[key],0);
+            if(!weightTotal) {
+              const fallback=checkedValues('#placementChoices').find(key=>key!==placement && !removed.has(key));
+              if(fallback) plan.allocations[fallback]+=moved;
+              else plan.allocations[placement]+=moved;
+            } else candidates.forEach(key=>{ plan.allocations[key]+=moved*plan.r.weights[key]/weightTotal; });
+          });
+        });
+      }
+      roundFinalAllocations(taskPlans,placementKeys,total);
+      ({aggregate,placementGoals}=summarize());
+      const executionPlans=taskPlans.filter(plan=>plan.amount>0);
+      const keywordTiers=keywordTierAllocation(aggregate.keyword);
+      renderAdvisor(taskPlans,total,aggregate,placementGoals,floorResult);
+      const activePlacements=placementKeys.filter(placement=>aggregate[placement]>0);
+      $('#recipeTable').innerHTML=activePlacements.map(placement=>
+        `<tr><td><span class="placement-name">${labels[placement][0]}</span><span class="placement-role">${labels[placement][1]}</span></td><td><span class="placement-money">${formatMoney(aggregate[placement])}</span></td></tr>`
+      ).join('') || '<tr><td colspan="2">請調整條件後重新產生配方。</td></tr>';
+      $('#taskTable').innerHTML=`<thead><tr><th>投放目標</th><th>分配預算</th>${activePlacements.map(placement=>`<th>${labels[placement][0]}</th>`).join('')}</tr></thead><tbody>${taskPlans.map(plan=>{
+        const cells=activePlacements.map(placement=>{
+          const amount=plan.allocations[placement]||0;
+          return `<td class="${amount?'task-money':'task-empty'}">${amount?formatMoney(amount):'—'}</td>`;
+        }).join('');
+        return `<tr><td><span class="placement-name">${TASKS[plan.key].name}</span></td><td class="task-total">${formatMoney(plan.amount)}</td>${cells}</tr>`;
+      }).join('')}</tbody>`;
+      state.last={total,posture,aggregate,floorResult,taskPlans,executionPlans,keywordTiers}; showStep(3);
+    }
+    function textPlan() {
+      const total=Number($('#totalBudget').value)||0;
+      const last=state.last;
+      const lines=[`PChome RMN 投廣配方師｜版位與預算規劃摘要`,`本期總預算：${formatMoney(total)}`,`投放期間：${flightLabel()}`,``, `版位與預算：`];
+      const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告'};
+      Object.entries(last?.aggregate||{}).filter(([,amount])=>amount>0).forEach(([placement,amount])=>lines.push(`- ${labels[placement]}：${formatMoney(amount)}`));
+      lines.push('',`各任務配置：`);
+      (last?.taskPlans||[]).forEach(plan=>lines.push(`- ${TASKS[plan.key].name}｜分配預算 ${formatMoney(plan.amount)}｜其中關鍵字 ${formatMoney(plan.keywordAmount)}`));
+      lines.push('', '提醒：正式投放前請依商品、檔期與廣告規格確認。'); return lines.join('\n');
+    }
+    document.querySelectorAll('[data-next]').forEach(btn=>btn.addEventListener('click',()=>{ if(btn.dataset.next==='2') syncMissions(); showStep(Number(btn.dataset.next)); }));
+    document.querySelectorAll('[data-back]').forEach(btn=>btn.addEventListener('click',()=>showStep(Number(btn.dataset.back))));
+    document.querySelectorAll('#missionCards input').forEach(input=>input.addEventListener('change',updateMissionSelectionCount));
+    document.querySelectorAll('#missionCards [data-priority]').forEach(select=>{
+      select.addEventListener('click',e=>e.stopPropagation());
+      select.addEventListener('change',e=>{ e.stopPropagation(); state.importance[e.target.dataset.priority]=e.target.value; });
+    });
+    $('#flightStartRange').addEventListener('input',()=>updateDatesFromRange('start'));
+    $('#flightEndRange').addEventListener('input',()=>updateDatesFromRange('end'));
+    $('#flightStart').addEventListener('change',()=>updateRangeFromDates('start'));
+    $('#flightEnd').addEventListener('change',()=>updateRangeFromDates('end'));
+    $('#brandStrength').addEventListener('change',renderMarketImpacts);
+    $('#competition').addEventListener('change',renderMarketImpacts);
+    $('#investment').addEventListener('change',renderMarketImpacts);
+    $('#flightStart').min=planningStart; $('#flightStart').max=planningEnd; $('#flightEnd').min=planningStart; $('#flightEnd').max=planningEnd;
+    $('#flightStart').value=planningStart; $('#flightEnd').value=addDays(planningStart,29); renderFlightRange(); updateMissionSelectionCount(); renderMarketImpacts();
+    $('#buildRecipe').addEventListener('click',buildRecipe);
+    $('#copyPlan').addEventListener('click',async()=>{ try { await navigator.clipboard.writeText(textPlan()); $('#copyPlan').textContent='已複製 ✓'; setTimeout(()=>$('#copyPlan').textContent='複製規劃摘要',1600); } catch { alert('目前瀏覽器無法存取剪貼簿，請改用下載規劃摘要。'); } });
+    $('#downloadPlan').addEventListener('click',()=>{ const blob=new Blob([textPlan()],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='rmn-recipe-plan.txt'; a.click(); URL.revokeObjectURL(url); });
+  </script>
+</body>
+</html>
