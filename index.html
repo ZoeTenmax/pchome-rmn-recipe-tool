@@ -139,20 +139,17 @@
     .result .actions .btn { padding:8px 12px; font-size:.78rem; }
     .footnote { margin-top:12px; padding:10px 13px; border-left:4px solid var(--orange); background:#fff8ed; color:#745231; font-size:.77rem; }
     .hide { display:none!important; }
-    @media (max-width:940px) and (min-width:641px) {
-      .shell { padding-inline:12px; }
-      .panel { padding:15px 16px; }
-      .planning-layout { grid-template-columns:minmax(0,1.25fr) minmax(285px,.9fr); gap:9px; }
-      .choice { padding:9px 11px; }
-      .choice .priority-picker { display:grid; gap:3px; }
-      .result-meta { gap:10px; }
-      .result-meta-item { min-width:auto; }
-      .combined-table { font-size:.68rem; }
-      .combined-table th,.combined-table td { padding-inline:5px; }
-      .advisor ul { column-gap:18px; }
-    }
-    @media (max-height:760px) and (min-width:641px) {
-      .shell { padding-block:8px; gap:7px; }
+    @media (min-width:641px) {
+      .shell {
+        width:1180px;
+        height:664px;
+        max-height:none;
+        aspect-ratio:auto;
+        margin:0;
+        padding-block:8px;
+        gap:7px;
+        transform-origin:top left;
+      }
       .hero { padding-block:10px; }
       .hero p { display:none; }
       .panel { padding-block:13px; }
@@ -167,27 +164,6 @@
       .result .advisor { max-height:112px; padding-bottom:6px; }
       .result .advisor ul { font-size:.66rem; line-height:1.28; }
       .result .actions .btn { padding:8px 12px; font-size:.82rem; }
-    }
-    @media (max-height:620px) and (min-width:641px) {
-      .condition-section { padding:10px 12px 9px; }
-      .condition-field { padding:8px 9px 7px; }
-      .condition-field select { padding:7px 9px; }
-      .placement-section.option-set { margin-top:13px; padding:10px 12px 9px; }
-      .toggle-card { min-height:61px; padding:7px 8px; }
-    }
-    @media (max-height:560px) and (min-width:641px) {
-      .condition-section { padding:8px 10px 7px; }
-      .condition-section .panel-head { margin-bottom:5px; }
-      .condition-field { padding:6px 8px 5px; }
-      .condition-field select { padding:6px 8px; }
-      .placement-section.option-set { margin-top:9px; padding:8px 10px 7px; }
-      .placement-section .option-title { margin-bottom:6px; }
-      .toggle-card { min-height:55px; padding:6px 7px; }
-    }
-    @media (max-height:520px) and (min-width:641px) {
-      .panel { padding-block:9px; }
-      .condition-field .hint { display:none; }
-      .placement-section.option-set { margin-top:7px; }
     }
     @media (max-width:640px) {
       html,body { overflow:auto; } .shell { height:auto; min-height:100%; max-height:none; aspect-ratio:auto; padding:16px 12px 46px; display:block; } .hero { padding:17px 18px; border-radius:16px; } .stepper { margin:14px 0; } .panel { height:auto; overflow:visible; padding:22px 17px; border-radius:20px; }
@@ -689,6 +665,24 @@
     $('#buildRecipe').addEventListener('click',buildRecipe);
     $('#copyPlan').addEventListener('click',async()=>{ try { await navigator.clipboard.writeText(textPlan()); $('#copyPlan').textContent='已複製 ✓'; setTimeout(()=>$('#copyPlan').textContent='複製規劃摘要',1600); } catch { alert('目前瀏覽器無法存取剪貼簿，請改用下載規劃摘要。'); } });
     $('#downloadPlan').addEventListener('click',()=>{ const blob=new Blob([textPlan()],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='rmn-recipe-plan.txt'; a.click(); URL.revokeObjectURL(url); });
+    const desktopCanvas={width:1180,height:664};
+    const plannerShell=document.querySelector('.shell');
+    function fitPlannerCanvas() {
+      if(window.innerWidth<=640) {
+        plannerShell.style.transform='';
+        plannerShell.style.marginLeft='';
+        plannerShell.style.marginTop='';
+        return;
+      }
+      const scale=Math.min(window.innerWidth/desktopCanvas.width,window.innerHeight/desktopCanvas.height,1);
+      const offsetX=Math.max(0,(window.innerWidth-desktopCanvas.width*scale)/2);
+      const offsetY=Math.max(0,(window.innerHeight-desktopCanvas.height*scale)/2);
+      plannerShell.style.transform=`scale(${scale})`;
+      plannerShell.style.marginLeft=`${offsetX}px`;
+      plannerShell.style.marginTop=`${offsetY}px`;
+    }
+    window.addEventListener('resize',fitPlannerCanvas,{passive:true});
+    fitPlannerCanvas();
   </script>
 </body>
 </html>
