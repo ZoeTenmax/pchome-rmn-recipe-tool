@@ -141,24 +141,43 @@
     .hide { display:none!important; }
     @media (min-width:641px) {
       .shell {
-        width:1180px;
-        height:664px;
-        max-height:none;
+        width:min(830px,100%);
+        height:min(622px,100dvh);
+        max-height:622px;
         aspect-ratio:auto;
-        margin:0;
-        padding-block:8px;
+        margin:0 auto;
+        padding:8px 10px;
         gap:7px;
-        transform-origin:top left;
       }
-      .hero { padding-block:10px; }
+      .hero { padding:9px 16px 8px; border-radius:11px; }
       .hero p { display:none; }
-      .panel { padding-block:13px; }
+      .stepper { gap:7px; }
+      .step-dot { padding:7px 10px; }
+      .panel { padding:12px 14px; border-radius:14px; }
       .panel-head { margin-bottom:7px; }
+      .planning-layout {
+        grid-template-columns:minmax(0,1.65fr) minmax(250px,.9fr);
+        gap:9px;
+      }
+      .cards { gap:7px; }
+      .choice { padding:9px 11px; }
       .choice span { font-size:.7rem; }
-      .market-card { padding:11px 13px; }
-      input,select,textarea { padding:9px 11px; }
+      .choice .priority-picker { gap:4px; }
+      .choice .priority-picker select { padding:5px 6px; }
+      .market-card { padding:10px 11px; }
+      input,select,textarea { padding:8px 9px; }
+      .condition-section { padding:11px 12px 10px; }
+      .condition-grid { gap:8px; }
+      .condition-field { padding:8px 9px; }
+      .condition-field select { padding:8px 9px; }
+      .placement-section.option-set { margin-top:13px; padding:11px 12px 10px; }
+      .placement-section .option-title { margin-bottom:7px; }
+      #placementChoices { gap:6px; }
+      .toggle-card { min-height:74px; padding:8px; }
       .actions { padding-top:7px; }
       .result { padding-block:10px; }
+      .result-meta { gap:10px; }
+      .result-meta-item { min-width:105px; }
       .result .recipe-table th,
       .result .recipe-table td { padding:5px 6px; }
       .result .advisor { max-height:112px; padding-bottom:6px; }
@@ -665,24 +684,6 @@
     $('#buildRecipe').addEventListener('click',buildRecipe);
     $('#copyPlan').addEventListener('click',async()=>{ try { await navigator.clipboard.writeText(textPlan()); $('#copyPlan').textContent='已複製 ✓'; setTimeout(()=>$('#copyPlan').textContent='複製規劃摘要',1600); } catch { alert('目前瀏覽器無法存取剪貼簿，請改用下載規劃摘要。'); } });
     $('#downloadPlan').addEventListener('click',()=>{ const blob=new Blob([textPlan()],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='rmn-recipe-plan.txt'; a.click(); URL.revokeObjectURL(url); });
-    const desktopCanvas={width:1180,height:664};
-    const plannerShell=document.querySelector('.shell');
-    function fitPlannerCanvas() {
-      if(window.innerWidth<=640) {
-        plannerShell.style.transform='';
-        plannerShell.style.marginLeft='';
-        plannerShell.style.marginTop='';
-        return;
-      }
-      const scale=Math.min(window.innerWidth/desktopCanvas.width,window.innerHeight/desktopCanvas.height,1);
-      const offsetX=Math.max(0,(window.innerWidth-desktopCanvas.width*scale)/2);
-      const offsetY=Math.max(0,(window.innerHeight-desktopCanvas.height*scale)/2);
-      plannerShell.style.transform=`scale(${scale})`;
-      plannerShell.style.marginLeft=`${offsetX}px`;
-      plannerShell.style.marginTop=`${offsetY}px`;
-    }
-    window.addEventListener('resize',fitPlannerCanvas,{passive:true});
-    fitPlannerCanvas();
   </script>
 </body>
 </html>
