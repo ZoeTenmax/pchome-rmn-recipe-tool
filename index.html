@@ -120,9 +120,16 @@
     .combined-table th:first-child,.combined-table td:first-child { width:25%; text-align:left; }
     .combined-table th:nth-child(2),.combined-table td:nth-child(2) { width:16%; background:#f1faff; }
     .combined-table th:nth-child(2) { color:var(--blue-deep); }
-    .combined-table .homepage-subtotal-row th,.combined-table .homepage-subtotal-row td { border-top:1px dashed #8ec8df; background:#f7fcfe; font-weight:var(--weight-label); }
-    .combined-table .homepage-subtotal-row th { color:#245b73; text-align:left; }
-    .combined-table .homepage-subtotal-row td:nth-child(2) { background:#eaf7fc; }
+    .combined-table .homepage-subtotal-row th,.combined-table .homepage-subtotal-row td { border-top:2px solid #66bddd; border-bottom:1px solid #9fd5e8; background:#e8f7fc; font-weight:var(--weight-title); }
+    .combined-table .homepage-subtotal-row th { color:var(--navy); text-align:left; }
+    .combined-table .homepage-subtotal-row td:nth-child(2) { background:#dff3fb; }
+    .combined-table .homepage-subtotal-row .placement-money { font-size:1rem; }
+    .subtotal-note { display:inline-block; margin-left:6px; padding:2px 6px; border-radius:99px; color:#20729a; background:#fff; font-size:.62rem; vertical-align:middle; }
+    .combined-table .homepage-detail-row td { background:#fbfdfe; }
+    .combined-table .homepage-detail-row td:first-child { position:relative; padding-left:27px; }
+    .combined-table .homepage-detail-row td:first-child:before { content:"↳"; position:absolute; left:11px; color:#70a9c0; font-weight:900; }
+    .combined-table .homepage-detail-row .placement-name { color:#3f5f6f; font-weight:800; }
+    .combined-table .homepage-detail-row .placement-money { font-size:.82rem; }
     .combined-table tfoot th,.combined-table tfoot td { border-top:2px solid #9bcfe5; background:var(--surface-summary); font-weight:var(--weight-title); }
     .combined-table tfoot th { color:var(--navy); text-align:left; }
     .combined-table tfoot td:nth-child(2) { background:#e8f7fd; }
@@ -666,7 +673,7 @@
           const amount=(plan.allocations.appBanner||0)+(plan.allocations.webBanner||0);
           return `<td class="${amount?'task-money':'task-empty'}">${amount?formatMoney(amount):'—'}</td>`;
         }).join('');
-        return `<tr class="homepage-subtotal-row"><th scope="row">首頁橫幅廣告小計</th><td><span class="placement-money">${formatMoney(aggregate.appBanner+aggregate.webBanner)}</span></td>${taskCells}</tr>`;
+        return `<tr class="homepage-subtotal-row"><th scope="row">首頁橫幅廣告小計<span class="subtotal-note">APP＋Web</span></th><td><span class="placement-money">${formatMoney(aggregate.appBanner+aggregate.webBanner)}</span></td>${taskCells}</tr>`;
       };
       $('#recipeTable').innerHTML=activePlacements.length
         ? `<thead><tr><th>採用版位</th><th>版位預算</th>${displayPlans.map(plan=>`<th>${TASKS[plan.key].name}</th>`).join('')}</tr></thead><tbody>${activePlacements.map(placement=>{
@@ -674,8 +681,9 @@
               const amount=plan.allocations[placement]||0;
               return `<td class="${amount?'task-money':'task-empty'}">${amount?formatMoney(amount):'—'}</td>`;
             }).join('');
-            const subtotal=placement==='webBanner'?homepageSubtotalRow():'';
-            return `<tr><td><span class="placement-name">${labels[placement][0]}</span><span class="placement-role">${labels[placement][1]}</span></td><td><span class="placement-money">${formatMoney(aggregate[placement])}</span></td>${taskCells}</tr>${subtotal}`;
+            const subtotal=placement==='appBanner'?homepageSubtotalRow():'';
+            const detailClass=showHomepageSubtotal && (placement==='appBanner' || placement==='webBanner')?'homepage-detail-row':'';
+            return `${subtotal}<tr class="${detailClass}"><td><span class="placement-name">${labels[placement][0]}</span><span class="placement-role">${labels[placement][1]}</span></td><td><span class="placement-money">${formatMoney(aggregate[placement])}</span></td>${taskCells}</tr>`;
           }).join('')}</tbody><tfoot><tr><th>總計</th><td><span class="placement-money">${formatMoney(total)}</span></td>${displayPlans.map(plan=>`<td class="task-total">${formatMoney(plan.amount)}</td>`).join('')}</tr></tfoot>`
         : `<tbody><tr><td colspan="${2+displayPlans.length}">請調整條件後重新產生配方。</td></tr></tbody>`;
       state.last={total,posture,aggregate,floorResult,taskPlans,executionPlans,keywordTiers};
@@ -690,14 +698,28 @@
       const showHomepageSubtotal=(last?.aggregate?.appBanner||0)>0 && (last?.aggregate?.webBanner||0)>0;
       const homepageSubtotal=(last?.aggregate?.appBanner||0)+(last?.aggregate?.webBanner||0);
       const lines=[`PChome RMN 廣告版位與預算規劃摘要`,`本期總預算｜${formatMoney(total)}`,`投放期間｜${flightLabel()}`,``,`【版位與預算配置】`];
-      placements.forEach(([placement,amount],index)=>{
-        lines.push(`${index+1}. ${labels[placement]}｜${formatMoney(amount)}`);
-        const breakdown=plans
+      const breakdownFor=placement=>plans
           .map(plan=>({name:TASKS[plan.key].name,amount:plan.allocations[placement]||0}))
           .filter(item=>item.amount>0)
           .map(item=>`${item.name} ${formatMoney(item.amount)}`);
+      let placementNumber=0;
+      placements.forEach(([placement,amount])=>{
+        if(showHomepageSubtotal && placement==='appBanner') {
+          placementNumber+=1;
+          const appBreakdown=breakdownFor('appBanner');
+          const webBreakdown=breakdownFor('webBanner');
+          lines.push(`${placementNumber}. 首頁橫幅廣告小計｜${formatMoney(homepageSubtotal)}`);
+          lines.push(`   ├ APP 首頁焦點橫幅廣告｜${formatMoney(last.aggregate.appBanner)}`);
+          if(appBreakdown.length) lines.push(`   │  └ ${appBreakdown.join('｜')}`);
+          lines.push(`   └ Web 首頁瘋搶下橫幅廣告｜${formatMoney(last.aggregate.webBanner)}`);
+          if(webBreakdown.length) lines.push(`      └ ${webBreakdown.join('｜')}`);
+          return;
+        }
+        if(showHomepageSubtotal && placement==='webBanner') return;
+        placementNumber+=1;
+        lines.push(`${placementNumber}. ${labels[placement]}｜${formatMoney(amount)}`);
+        const breakdown=breakdownFor(placement);
         if(breakdown.length) lines.push(`   └ ${breakdown.join('｜')}`);
-        if(placement==='webBanner' && showHomepageSubtotal) lines.push(`首頁橫幅廣告小計｜${formatMoney(homepageSubtotal)}`);
       });
       lines.push(`總計｜${formatMoney(total)}`,``,`【各投放目標總計】`);
       plans.forEach(plan=>lines.push(`- ${TASKS[plan.key].name}｜${formatMoney(plan.amount)}`));
