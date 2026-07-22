@@ -120,16 +120,13 @@
     .combined-table th:first-child,.combined-table td:first-child { width:25%; text-align:left; }
     .combined-table th:nth-child(2),.combined-table td:nth-child(2) { width:16%; background:#f1faff; }
     .combined-table th:nth-child(2) { color:var(--blue-deep); }
-    .combined-table .homepage-subtotal-row th,.combined-table .homepage-subtotal-row td { border-top:2px solid #66bddd; border-bottom:1px solid #9fd5e8; background:#e8f7fc; font-weight:var(--weight-title); }
-    .combined-table .homepage-subtotal-row th { color:var(--navy); text-align:left; }
-    .combined-table .homepage-subtotal-row td:nth-child(2) { background:#dff3fb; }
-    .combined-table .homepage-subtotal-row .placement-money { font-size:1rem; }
     .subtotal-note { display:inline-block; margin-left:6px; padding:2px 6px; border-radius:99px; color:#20729a; background:#fff; font-size:.62rem; vertical-align:middle; }
     .combined-table .homepage-detail-row td { background:#fbfdfe; }
     .combined-table .homepage-detail-row td:first-child { position:relative; padding-left:27px; }
-    .combined-table .homepage-detail-row td:first-child:before { content:"↳"; position:absolute; left:11px; color:#70a9c0; font-weight:900; }
-    .combined-table .homepage-detail-row .placement-name { color:#3f5f6f; font-weight:800; }
-    .combined-table .homepage-detail-row .placement-money { font-size:.82rem; }
+    .combined-table .homepage-detail-row td:first-child:before { content:"↳"; position:absolute; left:11px; color:#a6bac4; font-weight:800; }
+    .combined-table .homepage-detail-row .placement-name { color:#718995; font-weight:700; }
+    .combined-table .homepage-detail-row .placement-money { color:#6594aa; font-size:.82rem; font-weight:800; }
+    .combined-table .homepage-detail-row .task-money { color:#718995; font-weight:700; }
     .combined-table tfoot th,.combined-table tfoot td { border-top:2px solid #9bcfe5; background:var(--surface-summary); font-weight:var(--weight-title); }
     .combined-table tfoot th { color:var(--navy); text-align:left; }
     .combined-table tfoot td:nth-child(2) { background:#e8f7fd; }
@@ -279,7 +276,7 @@
         </div>
       </div>
       <section class="result-section"><h3><span class="section-number">1</span>版位與預算配置</h3><div class="recipe-table-wrap"><table class="recipe-table combined-table" id="recipeTable"></table></div></section>
-      <details class="advisor-details"><summary><span class="section-number">2</span>查看投放建議 <small>需要時再展開完整說明</small></summary><div class="advisor" id="advisorSummary"></div></details>
+      <details class="advisor-details" open><summary><span class="section-number">2</span>投放建議</summary><div class="advisor" id="advisorSummary"></div></details>
       <div class="actions"><button class="btn secondary" data-back="2">← 返回調整條件</button><div class="action-cluster"><button class="btn secondary" id="copyPlan">複製規劃摘要</button><button class="btn primary" id="downloadPlan">下載規劃摘要</button><a class="btn lime" id="budgetTool" target="_blank" rel="noopener" href="https://ads.pchome.tw/university/pchome-rmn-%e5%bb%a3%e5%91%8a%e8%a8%ad%e5%ae%9a/%e5%bb%ba%e7%ab%8b-pchome-%e5%bb%a3%e5%91%8a/pchome-rmn-%e9%a0%90%e7%ae%97%e8%a8%88%e7%ae%97%e6%a9%9f/" style="text-decoration:none">前往預算計算機 →</a></div></div>
     </section>
   </main>
@@ -673,7 +670,7 @@
           const amount=(plan.allocations.appBanner||0)+(plan.allocations.webBanner||0);
           return `<td class="${amount?'task-money':'task-empty'}">${amount?formatMoney(amount):'—'}</td>`;
         }).join('');
-        return `<tr class="homepage-subtotal-row"><th scope="row">首頁橫幅廣告小計<span class="subtotal-note">APP＋Web</span></th><td><span class="placement-money">${formatMoney(aggregate.appBanner+aggregate.webBanner)}</span></td>${taskCells}</tr>`;
+        return `<tr class="homepage-subtotal-row"><td><span class="placement-name">首頁橫幅廣告</span><span class="subtotal-note">APP＋Web</span></td><td><span class="placement-money">${formatMoney(aggregate.appBanner+aggregate.webBanner)}</span></td>${taskCells}</tr>`;
       };
       $('#recipeTable').innerHTML=activePlacements.length
         ? `<thead><tr><th>採用版位</th><th>版位預算</th>${displayPlans.map(plan=>`<th>${TASKS[plan.key].name}</th>`).join('')}</tr></thead><tbody>${activePlacements.map(placement=>{
@@ -708,7 +705,7 @@
           placementNumber+=1;
           const appBreakdown=breakdownFor('appBanner');
           const webBreakdown=breakdownFor('webBanner');
-          lines.push(`${placementNumber}. 首頁橫幅廣告小計｜${formatMoney(homepageSubtotal)}`);
+          lines.push(`${placementNumber}. 首頁橫幅廣告（APP＋Web）｜${formatMoney(homepageSubtotal)}`);
           lines.push(`   ├ APP 首頁焦點橫幅廣告｜${formatMoney(last.aggregate.appBanner)}`);
           if(appBreakdown.length) lines.push(`   │  └ ${appBreakdown.join('｜')}`);
           lines.push(`   └ Web 首頁瘋搶下橫幅廣告｜${formatMoney(last.aggregate.webBanner)}`);
