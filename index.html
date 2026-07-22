@@ -120,6 +120,9 @@
     .combined-table th:first-child,.combined-table td:first-child { width:25%; text-align:left; }
     .combined-table th:nth-child(2),.combined-table td:nth-child(2) { width:16%; background:#f1faff; }
     .combined-table th:nth-child(2) { color:var(--blue-deep); }
+    .combined-table .homepage-subtotal-row th,.combined-table .homepage-subtotal-row td { border-top:1px dashed #8ec8df; background:#f7fcfe; font-weight:var(--weight-label); }
+    .combined-table .homepage-subtotal-row th { color:#245b73; text-align:left; }
+    .combined-table .homepage-subtotal-row td:nth-child(2) { background:#eaf7fc; }
     .combined-table tfoot th,.combined-table tfoot td { border-top:2px solid #9bcfe5; background:var(--surface-summary); font-weight:var(--weight-title); }
     .combined-table tfoot th { color:var(--navy); text-align:left; }
     .combined-table tfoot td:nth-child(2) { background:#e8f7fd; }
@@ -656,13 +659,23 @@
       renderAdvisor(taskPlans,total,aggregate,placementGoals,floorResult);
       const activePlacements=placementKeys.filter(placement=>aggregate[placement]>0);
       const displayPlans=executionPlans.length?executionPlans:taskPlans;
+      const showHomepageSubtotal=aggregate.appBanner>0 && aggregate.webBanner>0;
+      const homepageSubtotalRow=()=>{
+        if(!showHomepageSubtotal) return '';
+        const taskCells=displayPlans.map(plan=>{
+          const amount=(plan.allocations.appBanner||0)+(plan.allocations.webBanner||0);
+          return `<td class="${amount?'task-money':'task-empty'}">${amount?formatMoney(amount):'—'}</td>`;
+        }).join('');
+        return `<tr class="homepage-subtotal-row"><th scope="row">首頁橫幅廣告小計</th><td><span class="placement-money">${formatMoney(aggregate.appBanner+aggregate.webBanner)}</span></td>${taskCells}</tr>`;
+      };
       $('#recipeTable').innerHTML=activePlacements.length
         ? `<thead><tr><th>採用版位</th><th>版位預算</th>${displayPlans.map(plan=>`<th>${TASKS[plan.key].name}</th>`).join('')}</tr></thead><tbody>${activePlacements.map(placement=>{
             const taskCells=displayPlans.map(plan=>{
               const amount=plan.allocations[placement]||0;
               return `<td class="${amount?'task-money':'task-empty'}">${amount?formatMoney(amount):'—'}</td>`;
             }).join('');
-            return `<tr><td><span class="placement-name">${labels[placement][0]}</span><span class="placement-role">${labels[placement][1]}</span></td><td><span class="placement-money">${formatMoney(aggregate[placement])}</span></td>${taskCells}</tr>`;
+            const subtotal=placement==='webBanner'?homepageSubtotalRow():'';
+            return `<tr><td><span class="placement-name">${labels[placement][0]}</span><span class="placement-role">${labels[placement][1]}</span></td><td><span class="placement-money">${formatMoney(aggregate[placement])}</span></td>${taskCells}</tr>${subtotal}`;
           }).join('')}</tbody><tfoot><tr><th>總計</th><td><span class="placement-money">${formatMoney(total)}</span></td>${displayPlans.map(plan=>`<td class="task-total">${formatMoney(plan.amount)}</td>`).join('')}</tr></tfoot>`
         : `<tbody><tr><td colspan="${2+displayPlans.length}">請調整條件後重新產生配方。</td></tr></tbody>`;
       state.last={total,posture,aggregate,floorResult,taskPlans,executionPlans,keywordTiers};
@@ -674,6 +687,8 @@
       const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告'};
       const plans=(last?.executionPlans?.length?last.executionPlans:last?.taskPlans||[]).filter(plan=>plan.amount>0);
       const placements=Object.entries(last?.aggregate||{}).filter(([,amount])=>amount>0);
+      const showHomepageSubtotal=(last?.aggregate?.appBanner||0)>0 && (last?.aggregate?.webBanner||0)>0;
+      const homepageSubtotal=(last?.aggregate?.appBanner||0)+(last?.aggregate?.webBanner||0);
       const lines=[`PChome RMN 廣告版位與預算規劃摘要`,`本期總預算｜${formatMoney(total)}`,`投放期間｜${flightLabel()}`,``,`【版位與預算配置】`];
       placements.forEach(([placement,amount],index)=>{
         lines.push(`${index+1}. ${labels[placement]}｜${formatMoney(amount)}`);
@@ -682,6 +697,7 @@
           .filter(item=>item.amount>0)
           .map(item=>`${item.name} ${formatMoney(item.amount)}`);
         if(breakdown.length) lines.push(`   └ ${breakdown.join('｜')}`);
+        if(placement==='webBanner' && showHomepageSubtotal) lines.push(`首頁橫幅廣告小計｜${formatMoney(homepageSubtotal)}`);
       });
       lines.push(`總計｜${formatMoney(total)}`,``,`【各投放目標總計】`);
       plans.forEach(plan=>lines.push(`- ${TASKS[plan.key].name}｜${formatMoney(plan.amount)}`));
