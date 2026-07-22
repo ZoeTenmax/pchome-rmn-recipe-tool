@@ -447,9 +447,6 @@
     const placementBudgetFloor=2000;
     const keywordBudgetFloor=5000;
     const keywordPriorityRate=.60;
-    const goalPackage=placementBudgetFloor;
-    const priorityOrder=['必要預算','加強預算','可選預算'];
-    const importanceScore={必要預算:3,加強預算:2,可選預算:1};
     const keywordTierWeights={t0:.60,t1:.25,t2:.10,t3:.05};
     const keywordTierLabels={
       t0:'核心商品字｜產品字、規格字',
@@ -479,75 +476,6 @@
       return directions[task];
     }
     const priorityWeight={必要預算:1,加強預算:.75,可選預算:.5};
-    function distributeGoalBudget(plans, budget) {
-      const totalWeight=plans.reduce((sum,plan)=>sum+priorityWeight[state.importance[plan.key]],0);
-      if(!totalWeight || !budget) return;
-      plans.forEach(plan=>{ plan.amount+=budget*priorityWeight[state.importance[plan.key]]/totalWeight; });
-    }
-    function allocateGoalPool(total) {
-      const plans=activeTasks().map(key=>({key,amount:0}));
-      const committed=plans.filter(plan=>state.importance[plan.key]!=='可選預算');
-      const protectedGoals=committed.length?committed:plans;
-      const protectedBudget=Math.min(total,protectedGoals.length*placementBudgetFloor);
-      distributeGoalBudget(protectedGoals,protectedBudget);
-      distributeGoalBudget(plans,total-protectedBudget);
-      return {plans,unallocated:0};
-    }
-    function allocateKeywordTaskBudgets(total) {
-      return allocateGoalPool(total);
-    }
-    function allocateTaskBudgets(total) {
-      const keywordBudget=getKeywordBase(total);
-      const taskPool=allocateGoalPool(Math.max(0,total-keywordBudget));
-      return {keywordBudget,plans:taskPool.plans,unallocated:taskPool.unallocated};
-    }
-    function updateRolePlacements(taskPlan, selected, deferred, advice) {
-      const role=taskPlan.r, plan=role.placementPlan;
-      const selectedWeight=selected.reduce((sum,placement)=>sum+plan.weights[placement],0);
-      const weights={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0};
-      selected.forEach(placement=>weights[placement]=plan.weights[placement]/selectedWeight);
-      plan.selected=selected; plan.deferred=[...new Set([...plan.deferred,...deferred])]; plan.weights=weights; plan.advice=advice;
-      role.weights=weights; role.core=selected.map(placement=>`<span class="pill">${placementNames[placement]}</span>`).join('');
-    }
-    function applyPlacementFloor(taskPlans) {
-      const paused=[];
-      taskPlans.forEach(taskPlan=>{
-        const plan=taskPlan.r.placementPlan;
-        if(taskPlan.paused) return;
-        if(plan.noPlan) {
-          taskPlan.paused=true;
-          taskPlan.pauseReason=plan.advice;
-          paused.push(taskPlan);
-          return;
-        }
-        let selected=[...plan.selected], removed=[];
-        while(selected.length>1) {
-          const selectedWeight=selected.reduce((sum,placement)=>sum+plan.weights[placement],0);
-          const allocations=selected.map(placement=>({placement,amount:taskPlan.amount*plan.weights[placement]/selectedWeight}));
-          const smallest=allocations.sort((a,b)=>a.amount-b.amount)[0];
-          if(smallest.amount>=placementBudgetFloor) break;
-          selected=selected.filter(placement=>placement!==smallest.placement); removed.push(smallest.placement);
-        }
-        if(selected.length===1 && taskPlan.amount<placementBudgetFloor) {
-          taskPlan.paused=true; taskPlan.pauseReason=`只保留 ${placementNames[selected[0]]} 仍只有 ${formatMoney(taskPlan.amount)}，未達每版位 ${formatMoney(placementBudgetFloor)} 的建議配置。`;
-          paused.push(taskPlan); return;
-        }
-        if(removed.length) updateRolePlacements(taskPlan,selected,removed,`原本拆分後有版位低於 ${formatMoney(placementBudgetFloor)}；已先收斂 ${removed.map(placement=>placementNames[placement]).join('、')}，讓保留版位各自至少有 ${formatMoney(placementBudgetFloor)}。`);
-      });
-      const survivors=taskPlans.filter(taskPlan=>!taskPlan.paused && !taskPlan.r.placementPlan.noPlan);
-      const released=paused.reduce((sum,taskPlan)=>sum+taskPlan.amount,0);
-      if(released && survivors.length) {
-        const scoreTotal=survivors.reduce((sum,taskPlan)=>sum+importanceScore[state.importance[taskPlan.key]]*Math.max(taskPlan.amount,1),0);
-        survivors.forEach(taskPlan=>{
-          const added=released*(importanceScore[state.importance[taskPlan.key]]*Math.max(taskPlan.amount,1))/scoreTotal;
-          taskPlan.amount+=added; taskPlan.reallocatedIn=added;
-        });
-      }
-      if(released && !survivors.length) {
-        taskPlans.filter(taskPlan=>taskPlan.paused).forEach(taskPlan=>{ taskPlan.keywordFallback=true; });
-      }
-      return {paused,released,keywordReallocation:survivors.length?0:released};
-    }
     function roundFinalAllocations(taskPlans, placementKeys, total) {
       const entries=[];
       taskPlans.forEach(plan=>placementKeys.forEach(placement=>{
@@ -563,6 +491,107 @@
         .sort((a,b)=>b.amount-a.amount)[0]
         || entries.filter(entry=>entry.amount+difference>=0).sort((a,b)=>b.amount-a.amount)[0];
       if(preferred) preferred.plan.allocations[preferred.placement]+=difference;
+    }
+    const nonKeywordTieOrder={recommend:0,brand:1,appBanner:2,webBanner:3};
+    function consolidateNonKeywordPlacements(taskPlans,placementKeys,aggregate,keywordEnabled) {
+      const nonKeywordKeys=placementKeys.filter(placement=>placement!=='keyword');
+      const candidates=nonKeywordKeys.filter(placement=>aggregate[placement]>0);
+      const pool=candidates.reduce((sum,placement)=>sum+aggregate[placement],0);
+      const result={paused:[],released:0,keywordReallocation:0,removedPlacements:[],keptPlacements:[],reallocatedTo:[]};
+      if(!pool || !candidates.length) return result;
+      const hasUnderFloor=candidates.some(placement=>aggregate[placement]<placementBudgetFloor);
+      if(!hasUnderFloor) {
+        result.keptPlacements=[...candidates];
+        return result;
+      }
+      const ranked=[...candidates].sort((a,b)=>
+        aggregate[b]-aggregate[a] || (nonKeywordTieOrder[a]??99)-(nonKeywordTieOrder[b]??99)
+      );
+      if(pool<placementBudgetFloor && keywordEnabled) {
+        taskPlans.forEach(plan=>{
+          nonKeywordKeys.forEach(placement=>{
+            plan.allocations.keyword+=(plan.allocations[placement]||0);
+            plan.allocations[placement]=0;
+          });
+        });
+        result.removedPlacements=[...candidates];
+        result.keywordReallocation=pool;
+        result.reallocatedTo=['keyword'];
+        return result;
+      }
+      const slotCount=Math.min(candidates.length,Math.max(1,Math.floor(pool/placementBudgetFloor)));
+      let kept=ranked.slice(0,slotCount);
+      // 預算只能支撐兩個版位時，APP／Web 不同時占滿兩席；除非本期只開放首頁版位。
+      if(slotCount===2 && kept.includes('appBanner') && kept.includes('webBanner')) {
+        const alternative=ranked.find(placement=>placement!=='appBanner' && placement!=='webBanner');
+        if(alternative) kept=[kept[0],alternative];
+      }
+      kept=[...new Set(kept)].sort((a,b)=>ranked.indexOf(a)-ranked.indexOf(b));
+      const removed=candidates.filter(placement=>!kept.includes(placement));
+      result.keptPlacements=[...kept];
+      result.removedPlacements=[...removed];
+      result.reallocatedTo=[...kept];
+
+      const rowTotals=taskPlans.map(plan=>nonKeywordKeys.reduce((sum,placement)=>sum+(plan.allocations[placement]||0),0));
+      const remaining=Math.max(0,pool-kept.length*placementBudgetFloor);
+      const keptScoreTotal=kept.reduce((sum,placement)=>sum+aggregate[placement],0);
+      const columnTargets=kept.map(placement=>
+        placementBudgetFloor+(keptScoreTotal?remaining*aggregate[placement]/keptScoreTotal:remaining/kept.length)
+      );
+      // 以各任務原始適配權重為種子，再同時校準任務總額與版位保底額。
+      const matrix=taskPlans.map((plan,rowIndex)=>{
+        const weightTotal=kept.reduce((sum,placement)=>sum+(plan.r.weights[placement]||0),0);
+        return kept.map(placement=>rowTotals[rowIndex]*(weightTotal?(plan.r.weights[placement]||0)/weightTotal:1/kept.length));
+      });
+      for(let iteration=0;iteration<80;iteration++) {
+        kept.forEach((placement,columnIndex)=>{
+          const current=matrix.reduce((sum,row)=>sum+row[columnIndex],0);
+          const factor=current?columnTargets[columnIndex]/current:0;
+          matrix.forEach(row=>{ row[columnIndex]*=factor; });
+        });
+        matrix.forEach((row,rowIndex)=>{
+          const current=row.reduce((sum,value)=>sum+value,0);
+          const factor=current?rowTotals[rowIndex]/current:0;
+          row.forEach((value,columnIndex)=>{ row[columnIndex]=value*factor; });
+        });
+      }
+      taskPlans.forEach((plan,rowIndex)=>{
+        nonKeywordKeys.forEach(placement=>{ plan.allocations[placement]=0; });
+        kept.forEach((placement,columnIndex)=>{ plan.allocations[placement]=matrix[rowIndex][columnIndex]; });
+      });
+      return result;
+    }
+    function enforceRoundedPlacementFloors(taskPlans,placementKeys,keywordBase) {
+      const aggregate=()=>Object.fromEntries(placementKeys.map(placement=>[
+        placement,taskPlans.reduce((sum,plan)=>sum+(plan.allocations[placement]||0),0)
+      ]));
+      let totals=aggregate();
+      const targets=[];
+      if(totals.keyword>0 && totals.keyword<keywordBase) targets.push('keyword');
+      targets.push(...placementKeys.filter(placement=>placement!=='keyword' && totals[placement]>0 && totals[placement]<placementBudgetFloor));
+      targets.forEach(target=>{
+        const targetFloor=target==='keyword'?keywordBase:placementBudgetFloor;
+        let deficit=targetFloor-totals[target];
+        while(deficit>0) {
+          const donors=placementKeys
+            .filter(placement=>placement!==target)
+            .map(placement=>({placement,surplus:totals[placement]-(placement==='keyword'?keywordBase:(totals[placement]>0?placementBudgetFloor:0))}))
+            .filter(donor=>donor.surplus>=100)
+            .sort((a,b)=>b.surplus-a.surplus);
+          if(!donors.length) break;
+          const donor=donors[0];
+          const plan=taskPlans
+            .filter(item=>(item.allocations[donor.placement]||0)>=100)
+            .sort((a,b)=>(b.allocations[donor.placement]||0)-(a.allocations[donor.placement]||0))[0];
+          if(!plan) break;
+          const moved=Math.min(deficit,donor.surplus,plan.allocations[donor.placement]);
+          const roundedMove=Math.max(100,Math.floor(moved/100)*100);
+          plan.allocations[donor.placement]-=roundedMove;
+          plan.allocations[target]=(plan.allocations[target]||0)+roundedMove;
+          totals=aggregate();
+          deficit=Math.max(0,targetFloor-totals[target]);
+        }
+      });
     }
     function renderAdvisor(taskPlans, total, aggregate, placementGoals, floorResult={removedPlacements:[]}) {
       const advice=[];
@@ -582,8 +611,8 @@
       ].filter(Boolean);
       if(homepageAllocations.length) advice.push(`<li><b>首頁曝光：</b>${homepageAllocations.join('，')}，在首頁放大當期主打商品的曝光機會。</li>`);
       if(floorResult.removedPlacements.length) {
-        const fallback=aggregate.keyword>0?'關鍵字廣告':'本期保留的版位';
-        advice.push(`<li><b>本期暫不分散：</b>${floorResult.removedPlacements.map(key=>placementNames[key]).join('、')} 的評估配置不足 NT$${placementBudgetFloor.toLocaleString('zh-TW')}，這筆預算先集中回${fallback}。</li>`);
+        const destinations=(floorResult.reallocatedTo||[]).map(key=>placementNames[key]).join('、') || (aggregate.keyword>0?'關鍵字廣告':'本期保留的版位');
+        advice.push(`<li><b>本期暫不分散：</b>${floorResult.removedPlacements.map(key=>placementNames[key]).join('、')} 的評估配置不足 NT$${placementBudgetFloor.toLocaleString('zh-TW')}，預算已集中至${destinations}。</li>`);
       }
       if(!advice.length) advice.push('<li>目前已依投放目標與可用版位產生配置。</li>');
       $('#advisorSummary').innerHTML=`<ul>${advice.join('')}</ul>`;
@@ -633,30 +662,10 @@
           plan.allocations.keyword+=moved;
         }));
       }
-      const floorResult={paused:[],released:0,keywordReallocation:0,removedPlacements:[]};
-      const removed=new Set();
-      while(true) {
-        ({aggregate,placementGoals}=summarize());
-        const underFloor=placementKeys.filter(placement=>placement!=='keyword' && aggregate[placement]>0 && aggregate[placement]<placementBudgetFloor && !removed.has(placement));
-        if(!underFloor.length) break;
-        underFloor.forEach(placement=>{
-          removed.add(placement);
-          floorResult.removedPlacements.push(placement);
-          taskPlans.forEach(plan=>{
-            const moved=plan.allocations[placement]||0;
-            if(!moved) return;
-            plan.allocations[placement]=0;
-            const candidates=placementKeys.filter(key=>key!==placement && !removed.has(key) && (plan.r.weights[key]||0)>0);
-            const weightTotal=candidates.reduce((sum,key)=>sum+plan.r.weights[key],0);
-            if(!weightTotal) {
-              const fallback=checkedValues('#placementChoices').find(key=>key!==placement && !removed.has(key));
-              if(fallback) plan.allocations[fallback]+=moved;
-              else plan.allocations[placement]+=moved;
-            } else candidates.forEach(key=>{ plan.allocations[key]+=moved*plan.r.weights[key]/weightTotal; });
-          });
-        });
-      }
+      ({aggregate,placementGoals}=summarize());
+      const floorResult=consolidateNonKeywordPlacements(taskPlans,placementKeys,aggregate,keywordEnabled);
       roundFinalAllocations(taskPlans,placementKeys,total);
+      enforceRoundedPlacementFloors(taskPlans,placementKeys,keywordBase);
       ({aggregate,placementGoals}=summarize());
       const executionPlans=taskPlans.filter(plan=>plan.amount>0);
       const keywordTiers=keywordTierAllocation(aggregate.keyword);
