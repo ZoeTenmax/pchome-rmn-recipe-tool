@@ -41,14 +41,14 @@
     .condition-section { display:flex; flex:1 1 auto; min-height:0; flex-direction:column; padding:13px 15px 12px; border:1px solid var(--line); border-radius:var(--radius-card); background:var(--surface-soft); }
     .condition-section .panel-head { margin-bottom:9px; }
     .condition-grid { flex:1 1 auto; min-height:0; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:minmax(0,1fr); gap:9px; }
-    .condition-field { position:relative; gap:6px; padding:10px 11px 9px; border:1px solid var(--control-line); border-radius:var(--radius-control); background:var(--white); box-shadow:0 5px 14px rgba(8,67,99,.06); }
+    .condition-field { position:relative; gap:6px; padding:10px 11px 12px; border:1px solid var(--control-line); border-radius:var(--radius-control); background:var(--white); box-shadow:0 5px 14px rgba(8,67,99,.06); }
     .condition-label { display:flex; align-items:center; gap:7px; color:var(--navy); font-size:var(--font-label); font-weight:var(--weight-title); }
     .condition-label b { display:inline-grid; place-items:center; width:21px; height:21px; border-radius:50%; background:var(--navy); color:#fff; font-size:.7rem; }
     .condition-field select { border:2px solid #68b7df; padding:9px 11px; font-weight:800; background-color:#fff; }
     .condition-field select:hover { border-color:var(--blue); }
     .condition-field .hint { align-self:start; font-size:.74rem; line-height:1.3; }
     label.field { display:grid; min-width:0; gap:7px; color:#38505d; font-size:var(--font-label); font-weight:var(--weight-label); }
-    label.field.condition-field { grid-template-columns:1fr; grid-template-rows:auto auto auto; align-content:center; align-items:stretch; gap:10px; }
+    label.field.condition-field { grid-template-columns:1fr; grid-template-rows:auto 1fr auto; align-content:stretch; align-items:stretch; gap:10px; }
     label.field > input,label.field > select { width:100%; min-width:0; max-width:100%; }
     input,select,textarea { border:1px solid var(--control-line); border-radius:var(--radius-control); color:var(--ink); background:var(--white); padding:12px 13px; outline:none; }
     input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(7,143,212,.12); }
@@ -84,10 +84,10 @@
     .placement-section .option-title > span { color:var(--navy); font-size:var(--font-section); line-height:1.25; letter-spacing:-.025em; font-weight:var(--weight-title); }
     .toggle-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }
     #placementChoices { grid-template-columns:repeat(5,minmax(0,1fr)); }
-    .toggle-card { position:relative; display:block; min-height:68px; padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--white); cursor:pointer; }
+    .toggle-card { position:relative; display:flex; align-items:center; min-height:52px; padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--white); cursor:pointer; }
     .toggle-card input { position:absolute; opacity:0; pointer-events:none; }
     .toggle-card:has(input:checked) { background:var(--sky); border-color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue); }
-    .toggle-card b { display:block; color:var(--navy); font-size:var(--font-body); font-weight:var(--weight-label); } .toggle-card span { display:block; margin-top:2px; color:var(--muted); font-size:.69rem; line-height:1.25; }
+    .toggle-card b { display:block; color:var(--navy); font-size:var(--font-body); font-weight:var(--weight-label); }
     .task-list { display:grid; gap:12px; }
     .task { display:grid; grid-template-columns:minmax(180px,1fr) 150px; align-items:center; gap:15px; border:1px solid var(--line); border-radius:16px; padding:15px 16px; }
     .task.disabled { opacity:.48; background:#fafbfc; }
@@ -181,12 +181,12 @@
       input,select,textarea { padding:8px 9px; }
       .condition-section { padding:11px 12px 10px; }
       .condition-grid { gap:8px; }
-      .condition-field { padding:8px 9px; }
+      .condition-field { padding:8px 9px 10px; }
       .condition-field select { padding:8px 9px; }
       .placement-section.option-set { margin-top:13px; padding:11px 12px 10px; }
       .placement-section .option-title { margin-bottom:7px; }
       #placementChoices { gap:6px; }
-      .toggle-card { min-height:74px; padding:8px; }
+      .toggle-card { min-height:52px; padding:8px; }
       .actions { padding-top:7px; }
       .result { padding-block:10px; }
       .result-meta { gap:10px; }
@@ -200,9 +200,9 @@
     @media (min-width:641px) and (max-width:830px) {
       .condition-section { padding:11px 12px 10px; }
       .condition-grid { grid-template-columns:1fr; grid-template-rows:repeat(3,minmax(0,1fr)); gap:8px; }
-      label.field.condition-field { grid-template-columns:minmax(210px,.9fr) minmax(280px,1.1fr); gap:5px 10px; padding:8px 9px; }
+      label.field.condition-field { grid-template-columns:1fr; grid-template-rows:auto 1fr auto; gap:7px; padding:8px 9px 10px; }
       .condition-field select { padding:8px 7px; font-size:.8rem; }
-      .condition-field .hint { grid-column:2; font-size:.7rem; line-height:1.25; }
+      .condition-field .hint { grid-column:auto; font-size:.7rem; line-height:1.25; }
       .placement-section.option-set {
         margin-top:12px;
         padding:11px 12px 10px;
@@ -251,17 +251,17 @@
       <div class="condition-section">
         <div class="panel-head"><div><h2>評估本期投放條件</h2><p>依本期主打商品與成效期待作答，系統會據此調整版位優先序與預算比例。</p></div></div>
         <div class="grid-3 condition-grid">
-          <label class="field condition-field"><span class="condition-label"><b>1</b>消費者有多熟悉你的品牌？</span><select id="brandStrength"><option value="1">1 分｜多數消費者未聽過</option><option value="2">2 分｜僅少數品類消費者認識</option><option value="3" selected>3 分｜部分品類消費者能辨識</option><option value="4">4 分｜多數品類消費者能辨識</option><option value="5">5 分｜消費者會主動搜尋品牌</option></select><span class="hint">以本期主打品類評估：多數未聽過選 1 分；認識品牌的人越多，分數越高；會主動搜尋選 5 分。</span></label>
-          <label class="field condition-field"><span class="condition-label"><b>2</b>有多少競品正在投廣？</span><select id="competition"><option value="1">1 分｜沒有看到競品投廣</option><option value="2">2 分｜看到 1～3 個競品投廣</option><option value="3" selected>3 分｜看到 4 個以上競品投廣</option></select><span class="hint">例：主打洗髮精，就在 PChome 24h 搜尋「洗髮精」；沒有競品廣告選 1 分，1～3 個選 2 分，4 個以上選 3 分。</span></label>
-          <label class="field condition-field"><span class="condition-label"><b>3</b>本期較重視 ROAS 效率，還是擴大廣告觸及？</span><select id="investment"><option value="1">1 分｜優先 ROAS，集中高意圖版位</option><option value="2" selected>2 分｜兼顧 ROAS 獲利與新客觸及</option><option value="3">3 分｜優先觸及，可接受較低 ROAS</option></select><span class="hint">集中高購買意圖版位選 1 分；兼顧 ROAS 與新客觸及選 2 分；接受較低 ROAS 擴大觸及選 3 分。</span></label>
+          <label class="field condition-field"><span class="condition-label"><b>1</b>消費者有多熟悉你的品牌？</span><span class="hint">以本期主打品類評估：多數未聽過選 1 分；認識品牌的人越多，分數越高；會主動搜尋選 5 分。</span><select id="brandStrength"><option value="1">1 分｜多數消費者未聽過</option><option value="2">2 分｜僅少數品類消費者認識</option><option value="3" selected>3 分｜部分品類消費者能辨識</option><option value="4">4 分｜多數品類消費者能辨識</option><option value="5">5 分｜消費者會主動搜尋品牌</option></select></label>
+          <label class="field condition-field"><span class="condition-label"><b>2</b>有多少競品正在投廣？</span><span class="hint">例：主打洗髮精，就在 PChome 24h 搜尋「洗髮精」；沒有競品廣告選 1 分，1～3 個選 2 分，4 個以上選 3 分。</span><select id="competition"><option value="1">1 分｜沒有看到競品投廣</option><option value="2">2 分｜看到 1～3 個競品投廣</option><option value="3" selected>3 分｜看到 4 個以上競品投廣</option></select></label>
+          <label class="field condition-field"><span class="condition-label"><b>3</b>本期「商品／活動觸及」的重要程度？</span><span class="hint">此選擇不會限制可採用的版位，也不代表預算均分；系統會依投放目標、受眾與市場條件，調整各版位的優先性與預算權重。一般常態或檔期投放，建議選 2 分。</span><select id="investment"><option value="1">1 分｜較低：以立即銷售為主</option><option value="2" selected>2 分｜中：銷售與觸及皆納入規劃</option><option value="3">3 分｜較高：加強商品／活動觸及</option></select></label>
         </div>
       </div>
       <section class="option-set placement-section"><div class="option-title"><span>選擇本期願意使用的廣告版位</span><small>預設全選；若無素材或本期不適用，可取消勾選。</small></div><div class="toggle-grid" id="placementChoices">
-        <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b><span>消費者搜尋相關字詞時出現，優先承接主動需求。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b><span>在 APP 首頁曝光主打商品、活動或品牌訊息。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b><span>在 Web 首頁曝光主打商品、活動或品牌訊息。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="brand" checked><b>品牌帶貨廣告</b><span>以主視覺搭配商品卡，同時溝通品牌與商品特色。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b><span>提醒曾互動或有相關需求的消費者回到商品頁。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b></label>
+        <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b></label>
+        <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b></label>
+        <label class="toggle-card"><input type="checkbox" value="brand" checked><b>品牌帶貨廣告</b></label>
+        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b></label>
       </div></section>
       <div class="actions"><button class="btn secondary" data-back="1">← 返回投放目標</button><button class="btn lime" id="buildRecipe">產生版位與預算建議 →</button></div>
     </section>
