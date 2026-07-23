@@ -250,19 +250,19 @@
 
     <section class="panel" data-panel="2">
       <div class="condition-section">
-        <div class="panel-head"><div><h2>評估這一期的投放條件</h2><p>請依目前實際狀況選擇，這些設定會一起調整版位的優先性與預算權重。</p></div></div>
+        <div class="panel-head"><div><h2>評估本期投放條件</h2><p>依本期主打商品與成效期待作答，系統會據此調整版位優先序與預算比例。</p></div></div>
         <div class="grid-3 condition-grid">
-          <label class="field condition-field"><span class="condition-label"><b>1</b>品牌認知度</span><select id="brandStrength"><option value="1">1 分｜多數消費者未聽過</option><option value="2">2 分｜僅少數品類消費者認識</option><option value="3" selected>3 分｜部分品類消費者能辨識</option><option value="4">4 分｜多數品類消費者能辨識</option><option value="5">5 分｜消費者會主動搜尋品牌</option></select><span class="hint">請依本期主打品類中的消費者認知自評。</span></label>
-          <label class="field condition-field"><span class="condition-label"><b>2</b>關鍵字品類競爭度</span><select id="competition"><option value="1">1 分｜沒有競品投廣</option><option value="2">2 分｜看見 1～3 個競品投廣</option><option value="3" selected>3 分｜看見 4 個以上競品投廣</option></select><span class="hint">請搜尋主力產品字後，再依搜尋結果自評。</span></label>
-          <label class="field condition-field"><span class="condition-label"><b>3</b>ROAS 承受度</span><select id="investment"><option value="1">1 分｜ROAS 效率優先</option><option value="2" selected>2 分｜平衡 ROAS 與觸及範圍</option><option value="3">3 分｜擴大觸及範圍優先</option></select><span class="hint">請自評本期 ROAS 與觸及範圍的取捨。</span></label>
+          <label class="field condition-field"><span class="condition-label"><b>1</b>消費者有多熟悉你的品牌？</span><select id="brandStrength"><option value="1">1 分｜多數消費者未聽過</option><option value="2">2 分｜僅少數品類消費者認識</option><option value="3" selected>3 分｜部分品類消費者能辨識</option><option value="4">4 分｜多數品類消費者能辨識</option><option value="5">5 分｜消費者會主動搜尋品牌</option></select><span class="hint">以本期主打品類的消費者為準。</span></label>
+          <label class="field condition-field"><span class="condition-label"><b>2</b>有多少競品正在投廣？</span><select id="competition"><option value="1">1 分｜沒有看到競品投廣</option><option value="2">2 分｜看到 1～3 個競品投廣</option><option value="3" selected>3 分｜看到 4 個以上競品投廣</option></select><span class="hint">搜尋主力產品字，再計算廣告中的競品品牌數。</span></label>
+          <label class="field condition-field"><span class="condition-label"><b>3</b>本期更重視 ROAS 還是觸及？</span><select id="investment"><option value="1">1 分｜優先 ROAS，集中高意圖版位</option><option value="2" selected>2 分｜兼顧 ROAS 與觸及</option><option value="3">3 分｜優先觸及，可接受較低 ROAS</option></select><span class="hint">選擇觸及優先，會提高圖像版位的評估比重。</span></label>
         </div>
       </div>
-      <section class="option-set placement-section"><div class="option-title"><span>這次有哪些版位可以使用？</span><small>系統預設全選；如本期不適用，可取消勾選。</small></div><div class="toggle-grid" id="placementChoices">
-        <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b><span>接住已在找商品、比價或比較規格的消費者，作為成交基本盤。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b><span>在 APP 首頁放大當期主打商品、檔期或品牌訊息的曝光機會。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b><span>在 Web 首頁放大當期主打商品、檔期或品牌訊息的曝光機會。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="brand" checked><b>品牌帶貨廣告</b><span>以主視覺搭配商品卡，快速說明商品資訊與品牌主打特色。</span></label>
-        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b><span>提醒曾互動或已有相關需求的消費者回訪商品頁。</span></label>
+      <section class="option-set placement-section"><div class="option-title"><span>選擇本期可使用的廣告版位</span><small>預設全選；若無素材或本期不適用，可取消勾選。</small></div><div class="toggle-grid" id="placementChoices">
+        <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b><span>消費者搜尋相關字詞時出現，優先承接主動需求。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b><span>在 APP 首頁曝光主打商品、活動或品牌訊息。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b><span>在 Web 首頁曝光主打商品、活動或品牌訊息。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="brand" checked><b>品牌帶貨廣告</b><span>以主視覺搭配商品卡，同時溝通品牌與商品特色。</span></label>
+        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b><span>提醒曾互動或有相關需求的消費者回到商品頁。</span></label>
       </div></section>
       <div class="actions"><button class="btn secondary" data-back="1">← 返回投放目標</button><button class="btn lime" id="buildRecipe">產生版位與預算建議 →</button></div>
     </section>
