@@ -144,7 +144,7 @@
     .advisor-details[open] summary:after { content:"－"; }
     .advisor-details summary small { color:var(--muted); font-size:.68rem; font-weight:500; }
     .advisor { max-height:145px; overflow:auto; padding:0 11px 8px; }
-    .advisor ul { margin:0; padding-left:17px; color:#405965; font-size:.7rem; line-height:1.35; columns:2; column-gap:24px; } .advisor li { break-inside:avoid; } .advisor li+li { margin-top:2px; }
+    .advisor ul { margin:0; padding-left:17px; color:#405965; font-size:.7rem; line-height:1.35; } .advisor li { break-inside:avoid; } .advisor li+li { margin-top:2px; }
     .result .actions { margin-top:auto; padding-top:5px; }
     .action-cluster { display:flex; gap:7px; flex-wrap:wrap; justify-content:flex-end; }
     .result .actions .btn { padding:8px 12px; font-size:.78rem; }
@@ -193,7 +193,7 @@
       .result-meta { gap:10px; }
       .result-meta-item { min-width:105px; }
       .result .recipe-table th,
-      .result .recipe-table td { padding:3px 6px; }
+      .result .recipe-table td { padding:5px 6px; }
       .result .advisor { max-height:112px; padding-bottom:6px; }
       .result .advisor ul { font-size:.66rem; line-height:1.28; }
       .result .actions .btn { padding:8px 12px; font-size:.82rem; }
@@ -220,7 +220,7 @@
       .stepper { grid-template-columns:1fr; } .grid-2,.grid-3,.cards,.planning-layout,.toggle-grid { grid-template-columns:1fr; }
       .condition-grid { grid-template-rows:auto; } label.field.condition-field { grid-template-columns:1fr; } .condition-field .hint { grid-column:auto; } #placementChoices { grid-template-columns:1fr; }
       .task { grid-template-columns:1fr; gap:9px; } .recipe-table { table-layout:auto; } .recipe-table-wrap { overflow:auto; } .panel-head { align-items:start; flex-direction:column; }
-      .result-meta { width:100%; flex-wrap:wrap; } .actions { flex-wrap:wrap; } .actions .btn { flex:1; } .action-cluster { width:100%; } .summary-bar { align-items:start; flex-direction:column; } .advisor ul { columns:1; }
+      .result-meta { width:100%; flex-wrap:wrap; } .actions { flex-wrap:wrap; } .actions .btn { flex:1; } .action-cluster { width:100%; } .summary-bar { align-items:start; flex-direction:column; }
     }
   </style>
 </head>
@@ -606,24 +606,10 @@
         }
       });
     }
-    function renderAdvisor(taskPlans, total, aggregate, placementGoals, floorResult={removedPlacements:[]}) {
+    // 只放表格給不了的資訊：關鍵字字詞方向，以及勾選了卻沒分到預算的原因。各版位金額與角色不在這裡重複。
+    function renderAdvisor(aggregate, floorResult={removedPlacements:[]}) {
       const advice=[];
-      const percentage=amount=>`${Math.round(amount/total*100)}％`;
-      if(aggregate.keyword>0) advice.push(`<li><b>成交入口：</b>關鍵字廣告配置 ${formatMoney(aggregate.keyword)}（${percentage(aggregate.keyword)}），作為主力優先承接主動搜尋。主打品牌字、商品字、規格字、競品字，其次為檔期字、需求字、情境字。</li>`);
-      const placementAdvice={
-        recommend:amount=>`<li><b>提醒回訪：</b>全站推薦廣告配置 ${formatMoney(amount)}（${percentage(amount)}），用來提醒曾互動或已有相關需求的消費者回到商品頁，不承擔新品的冷啟動曝光。</li>`,
-        brand:amount=>`<li><b>放大商品特色：</b>品牌帶貨廣告配置 ${formatMoney(amount)}（${percentage(amount)}），以主視覺搭配商品卡，讓消費者一次理解商品資訊與品牌主打特色。</li>`,
-        personal:amount=>`<li><b>會員回購：</b>個人化黃金推薦配置 ${formatMoney(amount)}（${percentage(amount)}），在顧客中心等會員場景推薦回購與延伸商品。</li>`
-      };
-      Object.entries(placementAdvice)
-        .filter(([placement])=>aggregate[placement]>0)
-        .sort(([a],[b])=>aggregate[b]-aggregate[a])
-        .forEach(([placement,copy])=>advice.push(copy(aggregate[placement])));
-      const homepageAllocations=[
-        aggregate.appBanner>0 ? `APP 首頁焦點橫幅廣告配置 ${formatMoney(aggregate.appBanner)}（${percentage(aggregate.appBanner)}）` : '',
-        aggregate.webBanner>0 ? `Web 首頁瘋搶下橫幅廣告配置 ${formatMoney(aggregate.webBanner)}（${percentage(aggregate.webBanner)}）` : ''
-      ].filter(Boolean);
-      if(homepageAllocations.length) advice.push(`<li><b>首頁曝光：</b>${homepageAllocations.join('，')}，在首頁放大當期主打商品的曝光機會。</li>`);
+      if(aggregate.keyword>0) advice.push('<li><b>關鍵字字詞方向：</b>主打品牌字、商品字、規格字、競品字，其次為檔期字、需求字、情境字。</li>');
       if(floorResult.removedPlacements.length) {
         const destinations=(floorResult.reallocatedTo||[]).map(key=>placementNames[key]).join('、') || (aggregate.keyword>0?'關鍵字廣告':'本期保留的版位');
         advice.push(`<li><b>本期暫不分散：</b>${floorResult.removedPlacements.map(key=>placementNames[key]).join('、')} 的評估配置不足 NT$${placementBudgetFloor.toLocaleString('zh-TW')}，預算已集中至${destinations}。</li>`);
@@ -683,7 +669,7 @@
       ({aggregate,placementGoals}=summarize());
       const executionPlans=taskPlans.filter(plan=>plan.amount>0);
       const keywordTiers=keywordTierAllocation(aggregate.keyword);
-      renderAdvisor(taskPlans,total,aggregate,placementGoals,floorResult);
+      renderAdvisor(aggregate,floorResult);
       const activePlacements=placementKeys.filter(placement=>aggregate[placement]>0);
       const displayPlans=executionPlans.length?executionPlans:taskPlans;
       const showHomepageSubtotal=aggregate.appBanner>0 && aggregate.webBanner>0;
