@@ -199,9 +199,13 @@
       .result .actions .btn { padding:8px 12px; font-size:.82rem; }
     }
     @media (min-width:831px) {
-      [data-panel="2"] .condition-section { flex:0 0 320px; }
+      [data-panel="2"] .condition-section { flex:1 1 auto; }
       [data-panel="2"] .condition-field .hint { align-self:start; }
-      [data-panel="2"] .placement-section.option-set { flex:0 0 142px; min-height:142px; box-sizing:border-box; }
+      [data-panel="2"] .placement-section.option-set { flex:0 0 auto; margin-top:16px; padding:16px; }
+      [data-panel="2"] .placement-section .option-title { margin-bottom:14px; }
+      [data-panel="2"] #placementChoices { row-gap:12px; column-gap:10px; }
+      [data-panel="2"] .toggle-card { min-height:52px; padding:9px 12px; }
+      [data-panel="2"] .actions { padding-top:14px; }
     }
     @media (min-width:641px) and (max-width:830px) {
       .condition-section { padding:11px 12px 10px; }
@@ -218,7 +222,7 @@
     @media (max-width:640px) {
       html,body { overflow:auto; } .shell { height:auto; min-height:100%; max-height:none; aspect-ratio:auto; padding:16px 12px 46px; display:block; } .hero { padding:17px 18px; border-radius:16px; } .stepper { margin:14px 0; } .panel { height:auto; overflow:visible; padding:22px 17px; border-radius:20px; }
       .stepper { grid-template-columns:1fr; } .grid-2,.grid-3,.cards,.planning-layout,.toggle-grid { grid-template-columns:1fr; }
-      .condition-grid { grid-template-rows:auto; } label.field.condition-field { grid-template-columns:1fr; } .condition-field .hint { grid-column:auto; } #placementChoices { grid-template-columns:1fr; }
+      .condition-grid { grid-template-rows:auto; } label.field.condition-field { grid-template-columns:1fr; } .condition-field .hint { grid-column:auto; } #placementChoices { grid-template-columns:1fr; gap:6px; } .placement-section .option-title { flex-direction:column; align-items:flex-start; gap:2px; }
       .task { grid-template-columns:1fr; gap:9px; } .recipe-table { table-layout:auto; } .recipe-table-wrap { overflow:auto; } .panel-head { align-items:start; flex-direction:column; }
       .result-meta { width:100%; flex-wrap:wrap; } .actions { flex-wrap:wrap; } .actions .btn { flex:1; } .action-cluster { width:100%; } .summary-bar { align-items:start; flex-direction:column; }
     }
