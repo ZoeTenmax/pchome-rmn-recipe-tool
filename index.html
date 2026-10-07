@@ -497,11 +497,12 @@
       const roundedTotal=roundAllocation(total);
       let difference=roundedTotal-entries.reduce((sum,{plan,placement})=>sum+(plan.allocations[placement]||0),0);
       if(!difference) return;
-      const preferred=entries
+      // 尾差優先補進最大的關鍵字配置；沒有關鍵字時補進最大的其他版位配置，確保各列加總等於總預算。
+      const candidates=entries
         .map(({plan,placement})=>({plan,placement,amount:plan.allocations[placement]||0}))
-        .filter(entry=>entry.placement==='keyword' && entry.amount+difference>=0)
-        .sort((a,b)=>b.amount-a.amount)[0]
-        || entries.filter(entry=>entry.amount+difference>=0).sort((a,b)=>b.amount-a.amount)[0];
+        .filter(entry=>entry.amount+difference>=0)
+        .sort((a,b)=>b.amount-a.amount);
+      const preferred=candidates.find(entry=>entry.placement==='keyword') || candidates[0];
       if(preferred) preferred.plan.allocations[preferred.placement]+=difference;
     }
     const nonKeywordTieOrder={recommend:0,brand:1,appBanner:2,webBanner:3,personal:4};
