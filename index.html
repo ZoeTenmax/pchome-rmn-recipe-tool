@@ -266,7 +266,7 @@
         <span class="placement-group-label">免準備圖片</span>
         <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b></label>
         <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b></label>
-        <label class="toggle-card"><input type="checkbox" value="personal" checked><b>個人化黃金推薦</b></label>
+        <label class="toggle-card"><input type="checkbox" value="personal" checked><b>個人化黃金推薦廣告</b></label>
         <span class="placement-group-label">需準備圖片</span>
         <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b></label>
         <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b></label>
@@ -359,7 +359,7 @@
       if(brand<=2 && comp>=3) return {name:'窄門突圍型', text:'不與大品牌做無差別曝光競爭；集中英雄商品、清楚賣點與高相關購物情境，先找到可放大的切口。'};
       return {name:'品類佔位型', text:'品牌仍在建立、但品類競爭較低。保留成交基礎，同時以新品與品牌訊息搶先建立品類印象。'};
     }
-    const placementNames={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',brand:'品牌帶貨廣告',recommend:'全站推薦廣告',personal:'個人化黃金推薦'};
+    const placementNames={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',brand:'品牌帶貨廣告',recommend:'全站推薦廣告',personal:'個人化黃金推薦廣告'};
     const tierNames={t0:'T0 核心消費者',t1:'T1 再行銷受眾',t2:'T2 同品類受眾',t3:'T3 跨品類受眾'};
     const checkedValues = selector => [...document.querySelectorAll(`${selector} input:checked`)].map(input=>input.value);
     const taskAudienceScores={
@@ -368,7 +368,7 @@
       promo:{t0:5,t1:4,t2:3,t3:2},
       brand:{t0:1,t1:2,t2:4,t3:3}
     };
-    // 個人化黃金推薦比照全站推薦、偏回購：再行銷最高，跨品類不給分。四個投放目標的受眾積分合計皆不高於全站推薦（常態導購同為 19）。
+    // 個人化黃金推薦廣告比照全站推薦、偏回購：再行銷最高，跨品類不給分。四個投放目標的受眾積分合計皆不高於全站推薦（常態導購同為 19）。
     const audiencePlacementScores={
       t0:{keyword:10,recommend:2,personal:2,brand:0,appBanner:0,webBanner:0},
       t1:{keyword:9,recommend:3,personal:4,brand:2,appBanner:1,webBanner:1},
@@ -378,7 +378,7 @@
     function marketAudienceScores(task) {
       return {...taskAudienceScores[task]};
     }
-    // 個人化黃金推薦的係數比照全站推薦，只在兩處調低：品牌熟悉度 1–3 分時會員基礎小；選「擴大觸及」時會員場景無法帶來新客。
+    // 個人化黃金推薦廣告的係數比照全站推薦，只在兩處調低：品牌熟悉度 1–3 分時會員基礎小；選「擴大觸及」時會員場景無法帶來新客。
     const marketPlacementFactors={
       brand:{
         1:{keyword:1,recommend:.50,personal:.40,brand:.60,appBanner:.60,webBanner:.60},
@@ -398,7 +398,7 @@
         3:{keyword:1,recommend:1.20,personal:.90,brand:1.25,appBanner:1.40,webBanner:1.35}
       }
     };
-    // 版位整體折數：會員場景的流量規模小於全站商品瀏覽動線，最多只給全站推薦的八成。要調整個人化黃金推薦的整體份量，只改這個數字。
+    // 版位整體折數：會員場景的流量規模小於全站商品瀏覽動線，最多只給全站推薦的八成。要調整個人化黃金推薦廣告的整體份量，只改這個數字。
     const placementScaleFactors={personal:.80};
     function marketPlacementScores() {
       const brand=marketPlacementFactors.brand[Number($('#brandStrength').value)];
@@ -621,7 +621,7 @@
       const total=roundAllocation(Number($('#totalBudget').value)||0), posture=getPosture();
       $('#totalBudget').value=total;
       $('#resultBudget').textContent=formatMoney(total); $('#resultFlight').textContent=flightLabel();
-      const labels={keyword:['關鍵字廣告','接住主動搜尋需求'],appBanner:['APP 首頁焦點橫幅廣告','APP 首頁主視覺曝光'],webBanner:['Web 首頁瘋搶下橫幅廣告','Web 首頁主視覺曝光'],recommend:['全站推薦廣告','提醒消費者回訪商品頁'],brand:['品牌帶貨廣告','主視覺＋商品卡'],personal:['個人化黃金推薦','會員場景回購推薦']};
+      const labels={keyword:['關鍵字廣告','接住主動搜尋需求'],appBanner:['APP 首頁焦點橫幅廣告','APP 首頁主視覺曝光'],webBanner:['Web 首頁瘋搶下橫幅廣告','Web 首頁主視覺曝光'],recommend:['全站推薦廣告','提醒消費者回訪商品頁'],brand:['品牌帶貨廣告','主視覺＋商品卡'],personal:['個人化黃金推薦廣告','會員場景回購推薦']};
       const placementKeys=Object.keys(labels);
       const keywordEnabled=checkedValues('#placementChoices').includes('keyword');
       const keywordBase=keywordEnabled?getKeywordBase(total):0;
@@ -698,7 +698,7 @@
     function textPlan() {
       const total=Number($('#totalBudget').value)||0;
       const last=state.last;
-      const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告',personal:'個人化黃金推薦'};
+      const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告',personal:'個人化黃金推薦廣告'};
       const plans=(last?.executionPlans?.length?last.executionPlans:last?.taskPlans||[]).filter(plan=>plan.amount>0);
       const placements=Object.entries(last?.aggregate||{}).filter(([,amount])=>amount>0);
       const showHomepageSubtotal=(last?.aggregate?.appBanner||0)>0 && (last?.aggregate?.webBanner||0)>0;
