@@ -83,11 +83,12 @@
     .placement-section .option-title { align-items:flex-end; margin-bottom:9px; }
     .placement-section .option-title > span { color:var(--navy); font-size:var(--font-section); line-height:1.25; letter-spacing:-.025em; font-weight:var(--weight-title); }
     .toggle-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }
-    #placementChoices { grid-template-columns:repeat(5,minmax(0,1fr)); }
-    .toggle-card { position:relative; display:flex; align-items:center; min-height:52px; padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--white); cursor:pointer; }
+    #placementChoices { grid-template-columns:auto repeat(3,minmax(0,1fr)); align-items:stretch; }
+    .placement-group-label { display:flex; align-items:center; padding-right:4px; color:var(--muted); font-size:.72rem; font-weight:var(--weight-label); white-space:nowrap; }
+    .toggle-card { position:relative; display:flex; align-items:center; min-height:40px; padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--white); cursor:pointer; }
     .toggle-card input { position:absolute; opacity:0; pointer-events:none; }
     .toggle-card:has(input:checked) { background:var(--sky); border-color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue); }
-    .toggle-card b { display:block; color:var(--navy); font-size:var(--font-body); font-weight:var(--weight-label); }
+    .toggle-card b { display:block; color:var(--navy); font-size:var(--font-body); font-weight:var(--weight-label); text-wrap:balance; }
     .task-list { display:grid; gap:12px; }
     .task { display:grid; grid-template-columns:minmax(180px,1fr) 150px; align-items:center; gap:15px; border:1px solid var(--line); border-radius:16px; padding:15px 16px; }
     .task.disabled { opacity:.48; background:#fafbfc; }
@@ -186,13 +187,13 @@
       .placement-section.option-set { margin-top:13px; padding:11px 12px 10px; }
       .placement-section .option-title { margin-bottom:7px; }
       #placementChoices { gap:6px; }
-      .toggle-card { min-height:52px; padding:8px; }
+      .toggle-card { min-height:40px; padding:8px; }
       .actions { padding-top:7px; }
       .result { padding-block:10px; }
       .result-meta { gap:10px; }
       .result-meta-item { min-width:105px; }
       .result .recipe-table th,
-      .result .recipe-table td { padding:5px 6px; }
+      .result .recipe-table td { padding:3px 6px; }
       .result .advisor { max-height:112px; padding-bottom:6px; }
       .result .advisor ul { font-size:.66rem; line-height:1.28; }
       .result .actions .btn { padding:8px 12px; font-size:.82rem; }
@@ -200,7 +201,7 @@
     @media (min-width:831px) {
       [data-panel="2"] .condition-section { flex:0 0 320px; }
       [data-panel="2"] .condition-field .hint { align-self:start; }
-      [data-panel="2"] .placement-section.option-set { flex:0 0 108px; min-height:108px; box-sizing:border-box; }
+      [data-panel="2"] .placement-section.option-set { flex:0 0 142px; min-height:142px; box-sizing:border-box; }
     }
     @media (min-width:641px) and (max-width:830px) {
       .condition-section { padding:11px 12px 10px; }
@@ -212,7 +213,7 @@
         margin-top:12px;
         padding:11px 12px 10px;
       }
-      #placementChoices { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      #placementChoices { grid-template-columns:auto repeat(3,minmax(0,1fr)); }
     }
     @media (max-width:640px) {
       html,body { overflow:auto; } .shell { height:auto; min-height:100%; max-height:none; aspect-ratio:auto; padding:16px 12px 46px; display:block; } .hero { padding:17px 18px; border-radius:16px; } .stepper { margin:14px 0; } .panel { height:auto; overflow:visible; padding:22px 17px; border-radius:20px; }
@@ -262,11 +263,14 @@
         </div>
       </div>
       <section class="option-set placement-section"><div class="option-title"><span>選擇本期願意使用的廣告版位</span><small>預設全選；若無素材或本期不適用，可取消勾選。</small></div><div class="toggle-grid" id="placementChoices">
+        <span class="placement-group-label">免準備圖片</span>
         <label class="toggle-card"><input type="checkbox" value="keyword" checked><b>關鍵字廣告</b></label>
+        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b></label>
+        <label class="toggle-card"><input type="checkbox" value="personal" checked><b>個人化黃金推薦</b></label>
+        <span class="placement-group-label">需準備圖片</span>
         <label class="toggle-card"><input type="checkbox" value="appBanner" checked><b>APP 首頁焦點橫幅廣告</b></label>
         <label class="toggle-card"><input type="checkbox" value="webBanner" checked><b>Web 首頁瘋搶下橫幅廣告</b></label>
         <label class="toggle-card"><input type="checkbox" value="brand" checked><b>品牌帶貨廣告</b></label>
-        <label class="toggle-card"><input type="checkbox" value="recommend" checked><b>全站推薦廣告</b></label>
       </div></section>
       <div class="actions"><button class="btn secondary" data-back="1">← 返回投放目標</button><button class="btn lime" id="buildRecipe">產生版位與預算建議 →</button></div>
     </section>
@@ -355,7 +359,7 @@
       if(brand<=2 && comp>=3) return {name:'窄門突圍型', text:'不與大品牌做無差別曝光競爭；集中英雄商品、清楚賣點與高相關購物情境，先找到可放大的切口。'};
       return {name:'品類佔位型', text:'品牌仍在建立、但品類競爭較低。保留成交基礎，同時以新品與品牌訊息搶先建立品類印象。'};
     }
-    const placementNames={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',brand:'品牌帶貨廣告',recommend:'全站推薦廣告'};
+    const placementNames={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',brand:'品牌帶貨廣告',recommend:'全站推薦廣告',personal:'個人化黃金推薦'};
     const tierNames={t0:'T0 核心消費者',t1:'T1 再行銷受眾',t2:'T2 同品類受眾',t3:'T3 跨品類受眾'};
     const checkedValues = selector => [...document.querySelectorAll(`${selector} input:checked`)].map(input=>input.value);
     const taskAudienceScores={
@@ -364,45 +368,49 @@
       promo:{t0:5,t1:4,t2:3,t3:2},
       brand:{t0:1,t1:2,t2:4,t3:3}
     };
+    // 個人化黃金推薦比照全站推薦、偏回購：再行銷最高，跨品類不給分。四個投放目標的受眾積分合計皆不高於全站推薦（常態導購同為 19）。
     const audiencePlacementScores={
-      t0:{keyword:10,recommend:2,brand:0,appBanner:0,webBanner:0},
-      t1:{keyword:9,recommend:3,brand:2,appBanner:1,webBanner:1},
-      t2:{keyword:7,recommend:3,brand:3,appBanner:2,webBanner:2},
-      t3:{keyword:5,recommend:1,brand:4,appBanner:4,webBanner:4}
+      t0:{keyword:10,recommend:2,personal:2,brand:0,appBanner:0,webBanner:0},
+      t1:{keyword:9,recommend:3,personal:4,brand:2,appBanner:1,webBanner:1},
+      t2:{keyword:7,recommend:3,personal:1,brand:3,appBanner:2,webBanner:2},
+      t3:{keyword:5,recommend:1,personal:0,brand:4,appBanner:4,webBanner:4}
     };
     function marketAudienceScores(task) {
       return {...taskAudienceScores[task]};
     }
+    // 個人化黃金推薦的係數比照全站推薦，只在兩處調低：品牌熟悉度 1–3 分時會員基礎小；選「擴大觸及」時會員場景無法帶來新客。
     const marketPlacementFactors={
       brand:{
-        1:{keyword:1,recommend:.50,brand:.60,appBanner:.60,webBanner:.60},
-        2:{keyword:1,recommend:.50,brand:.65,appBanner:.65,webBanner:.65},
-        3:{keyword:1.05,recommend:.70,brand:.70,appBanner:.70,webBanner:.70},
-        4:{keyword:1.20,recommend:1,brand:.85,appBanner:.85,webBanner:.85},
-        5:{keyword:1.25,recommend:1.05,brand:.95,appBanner:.95,webBanner:.95}
+        1:{keyword:1,recommend:.50,personal:.40,brand:.60,appBanner:.60,webBanner:.60},
+        2:{keyword:1,recommend:.50,personal:.45,brand:.65,appBanner:.65,webBanner:.65},
+        3:{keyword:1.05,recommend:.70,personal:.60,brand:.70,appBanner:.70,webBanner:.70},
+        4:{keyword:1.20,recommend:1,personal:1,brand:.85,appBanner:.85,webBanner:.85},
+        5:{keyword:1.25,recommend:1.05,personal:1.05,brand:.95,appBanner:.95,webBanner:.95}
       },
       competition:{
-        1:{keyword:1.20,recommend:.80,brand:.70,appBanner:.65,webBanner:.65},
-        2:{keyword:1.15,recommend:1.10,brand:1.15,appBanner:1.20,webBanner:1.20},
-        3:{keyword:1,recommend:1.25,brand:1.35,appBanner:1.50,webBanner:1.50}
+        1:{keyword:1.20,recommend:.80,personal:.80,brand:.70,appBanner:.65,webBanner:.65},
+        2:{keyword:1.15,recommend:1.10,personal:1.10,brand:1.15,appBanner:1.20,webBanner:1.20},
+        3:{keyword:1,recommend:1.25,personal:1.25,brand:1.35,appBanner:1.50,webBanner:1.50}
       },
       roas:{
-        1:{keyword:1.25,recommend:.60,brand:.40,appBanner:.30,webBanner:.30},
-        2:{keyword:1.10,recommend:.95,brand:.90,appBanner:.85,webBanner:.80},
-        3:{keyword:1,recommend:1.20,brand:1.25,appBanner:1.40,webBanner:1.35}
+        1:{keyword:1.25,recommend:.60,personal:.60,brand:.40,appBanner:.30,webBanner:.30},
+        2:{keyword:1.10,recommend:.95,personal:.95,brand:.90,appBanner:.85,webBanner:.80},
+        3:{keyword:1,recommend:1.20,personal:.90,brand:1.25,appBanner:1.40,webBanner:1.35}
       }
     };
+    // 版位整體折數：會員場景的流量規模小於全站商品瀏覽動線，最多只給全站推薦的八成。要調整個人化黃金推薦的整體份量，只改這個數字。
+    const placementScaleFactors={personal:.80};
     function marketPlacementScores() {
       const brand=marketPlacementFactors.brand[Number($('#brandStrength').value)];
       const competition=marketPlacementFactors.competition[Number($('#competition').value)];
       const roas=marketPlacementFactors.roas[$('#investment').value];
       return Object.fromEntries(Object.keys(brand).map(placement=>[
-        placement,brand[placement]*competition[placement]*roas[placement]
+        placement,brand[placement]*competition[placement]*roas[placement]*(placementScaleFactors[placement]??1)
       ]));
     }
     function selectPlacements(task, amount, total) {
       const audienceTiers=['t0','t1','t2','t3'], allowedPlacements=checkedValues('#placementChoices');
-      const raw={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0}, tierAllocation={t0:0,t1:0,t2:0,t3:0};
+      const raw={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0,personal:0}, tierAllocation={t0:0,t1:0,t2:0,t3:0};
       if(!allowedPlacements.length) return {weights:raw,selected:[],deferred:[],tierAllocation,advice:'請至少保留一個版位，才能產生配方。',noPlan:true};
       const audienceScores=marketAudienceScores(task), marketScores=marketPlacementScores();
       const tierTotal=audienceTiers.reduce((sum,tier)=>sum+audienceScores[tier],0);
@@ -428,7 +436,7 @@
       const nonKeywordRanked=ranked.filter(([placement])=>placement!=='keyword');
       // 所有本期勾選的版位都先參與積分計算；整期匯總後才以 NT$2,000 門檻取捨。
       const selected=ranked;
-      const selectedTotal=selected.reduce((sum,[,weight])=>sum+weight,0), finalWeights={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0};
+      const selectedTotal=selected.reduce((sum,[,weight])=>sum+weight,0), finalWeights={keyword:0,appBanner:0,webBanner:0,recommend:0,brand:0,personal:0};
       selected.forEach(([placement,weight])=>finalWeights[placement]=weight/selectedTotal);
       const deferred=ranked.filter(([placement])=>!selected.some(([selectedPlacement])=>selectedPlacement===placement)).map(([placement])=>placement);
       const advice=deferred.length ? `此任務占本期 ${share}％；先保留積分最高的 ${selected.length} 個版位，避免預算分散。` : '目前可用版位皆已納入此任務。';
@@ -436,7 +444,7 @@
     }
     function roles(task, amount, total) {
       const profile=$('#investment').value;
-      const base = { keyword:'接住主動搜尋需求', appBanner:'在 APP 首頁放大當期主打商品', webBanner:'在 Web 首頁放大當期主打商品', recommend:'提醒曾互動或有相關需求的消費者回訪商品頁', brand:'用主視覺與商品卡說明商品特色' };
+      const base = { keyword:'接住主動搜尋需求', appBanner:'在 APP 首頁放大當期主打商品', webBanner:'在 Web 首頁放大當期主打商品', recommend:'提醒曾互動或有相關需求的消費者回訪商品頁', personal:'在會員場景推薦回購與延伸商品', brand:'用主視覺與商品卡說明商品特色' };
       const placementPlan=selectPlacements(task,amount,total), weights=placementPlan.weights;
       const core=placementPlan.selected.length ? placementPlan.selected.map(k=>`<span class="pill">${placementNames[k]}</span>`).join('') : '尚無可計算版位';
       const tiers=Object.entries(placementPlan.tierAllocation).filter(([,weight])=>weight>0).map(([tier,weight])=>`<span class="pill">${tierNames[tier]} ${Math.round(weight*100)}%</span>`).join('') || '尚無可計算受眾層';
@@ -496,7 +504,7 @@
         || entries.filter(entry=>entry.amount+difference>=0).sort((a,b)=>b.amount-a.amount)[0];
       if(preferred) preferred.plan.allocations[preferred.placement]+=difference;
     }
-    const nonKeywordTieOrder={recommend:0,brand:1,appBanner:2,webBanner:3};
+    const nonKeywordTieOrder={recommend:0,brand:1,appBanner:2,webBanner:3,personal:4};
     function consolidateNonKeywordPlacements(taskPlans,placementKeys,aggregate,keywordEnabled) {
       const nonKeywordKeys=placementKeys.filter(placement=>placement!=='keyword');
       const candidates=nonKeywordKeys.filter(placement=>aggregate[placement]>0);
@@ -603,7 +611,8 @@
       if(aggregate.keyword>0) advice.push(`<li><b>成交入口：</b>關鍵字廣告配置 ${formatMoney(aggregate.keyword)}（${percentage(aggregate.keyword)}），作為主力優先承接主動搜尋。主打品牌字、商品字、規格字、競品字，其次為檔期字、需求字、情境字。</li>`);
       const placementAdvice={
         recommend:amount=>`<li><b>提醒回訪：</b>全站推薦廣告配置 ${formatMoney(amount)}（${percentage(amount)}），用來提醒曾互動或已有相關需求的消費者回到商品頁，不承擔新品的冷啟動曝光。</li>`,
-        brand:amount=>`<li><b>放大商品特色：</b>品牌帶貨廣告配置 ${formatMoney(amount)}（${percentage(amount)}），以主視覺搭配商品卡，讓消費者一次理解商品資訊與品牌主打特色。</li>`
+        brand:amount=>`<li><b>放大商品特色：</b>品牌帶貨廣告配置 ${formatMoney(amount)}（${percentage(amount)}），以主視覺搭配商品卡，讓消費者一次理解商品資訊與品牌主打特色。</li>`,
+        personal:amount=>`<li><b>會員回購：</b>個人化黃金推薦配置 ${formatMoney(amount)}（${percentage(amount)}），在顧客中心等會員場景推薦回購與延伸商品。</li>`
       };
       Object.entries(placementAdvice)
         .filter(([placement])=>aggregate[placement]>0)
@@ -625,7 +634,7 @@
       const total=roundAllocation(Number($('#totalBudget').value)||0), posture=getPosture();
       $('#totalBudget').value=total;
       $('#resultBudget').textContent=formatMoney(total); $('#resultFlight').textContent=flightLabel();
-      const labels={keyword:['關鍵字廣告','接住主動搜尋需求'],appBanner:['APP 首頁焦點橫幅廣告','APP 首頁主視覺曝光'],webBanner:['Web 首頁瘋搶下橫幅廣告','Web 首頁主視覺曝光'],recommend:['全站推薦廣告','提醒消費者回訪商品頁'],brand:['品牌帶貨廣告','主視覺＋商品卡']};
+      const labels={keyword:['關鍵字廣告','接住主動搜尋需求'],appBanner:['APP 首頁焦點橫幅廣告','APP 首頁主視覺曝光'],webBanner:['Web 首頁瘋搶下橫幅廣告','Web 首頁主視覺曝光'],recommend:['全站推薦廣告','提醒消費者回訪商品頁'],brand:['品牌帶貨廣告','主視覺＋商品卡'],personal:['個人化黃金推薦','會員場景回購推薦']};
       const placementKeys=Object.keys(labels);
       const keywordEnabled=checkedValues('#placementChoices').includes('keyword');
       const keywordBase=keywordEnabled?getKeywordBase(total):0;
@@ -637,7 +646,7 @@
       const taskPlans=active.map(key=>{
         const ratio=goalWeightTotal?goalWeight(key)/goalWeightTotal:0;
         const amount=total*ratio, r=roles(key,amount,total);
-        const weights=r.placementPlan.noPlan?{keyword:1,appBanner:0,webBanner:0,recommend:0,brand:0}:r.weights;
+        const weights=r.placementPlan.noPlan?{keyword:1,appBanner:0,webBanner:0,recommend:0,brand:0,personal:0}:r.weights;
         const allocations=Object.fromEntries(placementKeys.map(placement=>[placement,amount*(weights[placement]||0)]));
         return {key,ratio,amount,r,allocations,keywordAmount:allocations.keyword,paused:false};
       });
@@ -702,7 +711,7 @@
     function textPlan() {
       const total=Number($('#totalBudget').value)||0;
       const last=state.last;
-      const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告'};
+      const labels={keyword:'關鍵字廣告',appBanner:'APP 首頁焦點橫幅廣告',webBanner:'Web 首頁瘋搶下橫幅廣告',recommend:'全站推薦廣告',brand:'品牌帶貨廣告',personal:'個人化黃金推薦'};
       const plans=(last?.executionPlans?.length?last.executionPlans:last?.taskPlans||[]).filter(plan=>plan.amount>0);
       const placements=Object.entries(last?.aggregate||{}).filter(([,amount])=>amount>0);
       const showHomepageSubtotal=(last?.aggregate?.appBanner||0)>0 && (last?.aggregate?.webBanner||0)>0;
